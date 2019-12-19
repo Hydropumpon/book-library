@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library
+    password: coolgame
+    username: postgres
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+
+application:
+  name: library-service
+
+server:
+  port: 8181
+
+library:
+  loan-period: 30
