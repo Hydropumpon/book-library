@@ -8,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,15 +21,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(exclude = "books")
-
-public class Author
+public class Author implements Serializable
 {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name="name", unique = true)
+	@Column(name = "name", unique = true)
 	@Size(max = 255)
 	@NotNull
 	private String name;
@@ -42,7 +42,7 @@ public class Author
 	@Override
 	public String toString()
 	{
-		return "Author{" + "id=" + id + ", name='" + name  + books.stream().map(Book::getTitle).collect(
-				Collectors.toList())+ '}';
+		return "Author{" + "id=" + id + ", name='" + name + books.stream().map(Book::getTitle)
+																 .collect(Collectors.toList()) + '}';
 	}
 }

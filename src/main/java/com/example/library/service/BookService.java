@@ -20,9 +20,10 @@ public class BookService
 	static final String BOOK_ALREADY_EXIST = "Book already exist";
 
 	@Autowired
-	BookRepository bookRepository;
+	private BookRepository bookRepository;
+
 	@Autowired
-	AuthorRepository authorRepository;
+	private AuthorRepository authorRepository;
 
 	public List<Book> getAllBooks()
 	{
@@ -73,7 +74,7 @@ public class BookService
 		Book bookDb = bookRepository.findById(bookId).orElseThrow(
 				() -> new NotFoundException(BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
 		Optional<Book> bookWithSameName = bookRepository.findByTitle(book.getTitle());
-		if (bookWithSameName.isPresent())
+		if (bookWithSameName.isPresent() && (!bookDb.getId().equals(bookWithSameName.get().getId())))
 		{
 			throw new ConflictException(BOOK_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
 		}

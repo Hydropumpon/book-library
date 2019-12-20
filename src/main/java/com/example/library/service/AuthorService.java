@@ -20,10 +20,10 @@ public class AuthorService
 	static final String AUTHOR_NOT_FOUND = "Author not found";
 
 	@Autowired
-	AuthorRepository authorRepository;
+	private AuthorRepository authorRepository;
 
 	@Autowired
-	BookRepository bookRepository;
+	private BookRepository bookRepository;
 
 	public List<Author> getAllAuthors()
 	{
@@ -78,7 +78,7 @@ public class AuthorService
 		Author authorDb = authorRepository.findById(authorId).orElseThrow(
 				() -> new NotFoundException(AUTHOR_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
 		Optional<Author> authorWithSameName = authorRepository.findByName(author.getName());
-		if (authorWithSameName.isPresent())
+		if (authorWithSameName.isPresent() && (!authorDb.getId().equals(authorWithSameName.get().getId())))
 		{
 			throw new ConflictException(AUTHOR_EXIST, ServiceErrorCode.ALREADY_EXIST);
 		}

@@ -1,7 +1,11 @@
 package com.example.library.controller;
 
 
-import com.example.library.model.Author;
+import com.example.library.converter.AuthorConverter;
+import com.example.library.converter.BookConverter;
+import com.example.library.converter.CycleAvoidingMappingContext;
+import com.example.library.dto.AuthorDto;
+import com.example.library.dto.BookDto;
 import com.example.library.model.Book;
 import com.example.library.service.AuthorService;
 import com.example.library.service.BookService;
@@ -12,63 +16,82 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/library/author")
 public class AuthorController
 {
 	@Autowired
-	AuthorService authorService;
+	private AuthorService authorService;
 
 	@Autowired
-	BookService bookService;
+	private BookService bookService;
+
+	@Autowired
+	private AuthorConverter authorConverter;
+
+	@Autowired
+	private BookConverter bookConverter;
 
 	@GetMapping
-	public List<Author> getAllAuthors()
+	public List<AuthorDto> getAllAuthors()
 	{
-		return authorService.getAllAuthors();
+		return authorService.getAllAuthors().stream().map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext())).collect(
+				Collectors.toList());
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Author> getAuthor(@PathVariable Long id)
+	public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id)
 	{
-		return new ResponseEntity<>(authorService.getOneAuthor(id), HttpStatus.OK);
+		return new ResponseEntity<>(
+				authorConverter.toDto(authorService.getOneAuthor(id), new CycleAvoidingMappingContext()),
+				HttpStatus.OK);
 	}
 
 	@PostMapping
-	public ResponseEntity<Author> addAuthor(@Valid @RequestBody Author author)
+	public ResponseEntity<AuthorDto> addAuthor(@Valid @RequestBody AuthorDto authorDto)
 	{
-		return new ResponseEntity<>(authorService.addAuthor(author), HttpStatus.OK);
+		return new ResponseEntity<>(authorConverter.toDto(authorService.addAuthor(
+				authorConverter.fromDto(authorDto, new CycleAvoidingMappingContext())),
+														  new CycleAvoidingMappingContext()), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{authorId}")
-	public ResponseEntity<Author> deleteAuthor(@PathVariable Long authorId)
+	public ResponseEntity<AuthorDto> deleteAuthor(@PathVariable Long authorId)
 	{
-		return new ResponseEntity<>(authorService.deleteAuthor(authorId), HttpStatus.OK);
+		return new ResponseEntity<>(
+				authorConverter.toDto(authorService.deleteAuthor(authorId), new CycleAvoidingMappingContext()),
+				HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/{authorId}")
-	public Author updateAuthor(@PathVariable Long authorId, @Valid @RequestBody Author author)
+	public AuthorDto updateAuthor(@PathVariable Long authorId, @Valid @RequestBody AuthorDto authorDto)
 	{
-		return authorService.updateAuthor(authorId, author);
+		return authorConverter.toDto(authorService.updateAuthor(authorId, authorConverter
+				.fromDto(authorDto, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
+
+
 	}
 
 	@PutMapping(value = "/{authorId}/book")
-	public ResponseEntity<Author> addRelativeBook(@PathVariable Long authorId, @Valid @RequestBody Book book)
+	public ResponseEntity<AuthorDto> addRelativeBook(@PathVariable Long authorId, @Valid @RequestBody BookDto bookDto)
 	{
-		return new ResponseEntity<>(authorService.addRelativeBook(authorId, book), HttpStatus.OK);
+		Book book = bookConverter.fromDto(bookDto, new CycleAvoidingMappingContext());
+
+		return new ResponseEntity<>(authorConverter.toDto(authorService.addRelativeBook(authorId, book), new CycleAvoidingMappingContext()), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/{authorId}/book")
-	public List<Book> getBooksByAuthor(@PathVariable Long authorId)
+	public List<BookDto> getBooksByAuthor(@PathVariable Long authorId)
 	{
-		return bookService.findAllByAuthor(authorId);
+		return bookService.findAllByAuthor(authorId).stream().map(book -> bookConverter.toDto(book, new CycleAvoidingMappingContext())).collect(Collectors.toList());
 	}
 
 	@DeleteMapping(value = "/{authorId}/book/{bookId}")
-	public Author deleteRelativeBook(@PathVariable Long authorId, @PathVariable Long bookId)
+	public AuthorDto deleteRelativeBook(@PathVariable Long authorId, @PathVariable Long bookId)
 	{
-		return authorService.deleteRelativeBook(authorId, bookId);
+		return authorConverter.toDto(authorService.deleteRelativeBook(authorId, bookId), new CycleAvoidingMappingContext());
 	}
 
 }

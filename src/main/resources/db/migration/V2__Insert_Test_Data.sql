@@ -14,4 +14,10 @@ insert into author_book(author_id, book_id) VALUES (1,4);
 insert into author_book(author_id, book_id) VALUES (2,2);
 insert into author_book(author_id, book_id) VALUES (3,2);
 
+insert into customer (email, first_name, last_name, login)
+values ('shirokov.aleksander@gmail.com', 'Alex', 'Shirokov', 'Hydropumpon');
+insert into customer (email, first_name, last_name, login)
+values ('shirokov.alex1989@yandex.ru', 'Igor', 'Shirokov', 'Shi4r');
+
+
 

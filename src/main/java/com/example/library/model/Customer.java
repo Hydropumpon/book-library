@@ -10,21 +10,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usr")
+@Table(name = "Customer")
 @Builder
-public class User
+@EqualsAndHashCode
+public class Customer
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private UserRole userRole;
-
 	@Column(unique = true)
 	private String login;
-
-	private String password;
 
 	private String firstName;
 
