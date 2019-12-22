@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -38,6 +39,10 @@ public class Book
 	@JsonSerialize(using = AuthorSetSerializer.class)
 	@ManyToMany(mappedBy = "books", fetch = FetchType.LAZY)
 	private Set<Author> authors = new HashSet<Author>();
+
+	@NotNull
+	@Min(0)
+	private Integer quantity;
 
 	@Override
 	public String toString()

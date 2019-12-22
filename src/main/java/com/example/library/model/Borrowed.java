@@ -4,26 +4,32 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Set;
 
-//TODO @Entity
+@Entity
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Borrowed
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	private Set<Book> books;
+	@ManyToOne()
+	@JoinColumn(name = "book_id")
+	private Book book;
 
-	private LocalDate borrowDate;
+	private LocalDate borrowDate = LocalDate.now();
 
 	private LocalDate returnDate;
+
+	private LocalDate returnTillDate = LocalDate.now().plusDays(30);
 
 }

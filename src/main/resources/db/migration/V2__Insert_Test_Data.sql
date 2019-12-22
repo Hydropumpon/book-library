@@ -1,7 +1,7 @@
-insert into book(id,description, title) values (1,'good book', 'java');
-insert into book(id,description, title) values (2,'normal book', 'java11');
-insert into book(id,description, title) values (3,'normal book', 'java8');
-insert into book(id,description, title) values (4,'bad book', 'javascript');
+insert into book(id,description, title, quantity) values (1,'good book', 'java',3);
+insert into book(id,description, title ,quantity) values (2,'normal book', 'java11',1);
+insert into book(id,description, title ,quantity) values (3,'normal book', 'java8',4);
+insert into book(id,description, title ,quantity) values (4,'bad book', 'javascript',5);
 
 insert into author(id,name) values (1,'author1');
 insert into author(id,name) values (2,'author2');

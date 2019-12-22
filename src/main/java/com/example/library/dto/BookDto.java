@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -19,7 +20,12 @@ public class BookDto
 	@NotBlank
 	private String title;
 
+	@NotNull
+	@Min(1)
+	private Integer quantity;
+
 	private String description;
 
 	private Set<AuthorDto> authors;
+
 }
