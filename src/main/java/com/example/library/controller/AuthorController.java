@@ -11,7 +11,6 @@ import com.example.library.service.AuthorService;
 import com.example.library.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/library/author")
-@PropertySource("classpath:application.properties")
 public class AuthorController
 {
 	private AuthorService authorService;
@@ -83,6 +81,7 @@ public class AuthorController
 				.fromDto(authorDto, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
 	}
 
+	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/{authorId}/book")
 	public List<BookDto> getAuthorBooks(@PathVariable Long authorId)
 	{
