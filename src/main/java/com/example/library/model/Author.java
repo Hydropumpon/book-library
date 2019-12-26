@@ -1,8 +1,6 @@
 package com.example.library.model;
 
 
-import com.example.library.serializer.BookSetSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,11 +31,18 @@ public class Author implements Serializable
 	@NotNull
 	private String name;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "author_book", joinColumns = @JoinColumn(name = "author_id"), inverseJoinColumns =
-	@JoinColumn(name = "book_id"))
-	@JsonSerialize(using = BookSetSerializer.class)
-	private Set<Book> books = new HashSet<Book>();
+	@ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
+	private Set<Book> books = new HashSet<>();
+
+	public void addBook(Book book)
+	{
+		books.add(book);
+	}
+
+	public void removeBook(Book book)
+	{
+		books.remove(book);
+	}
 
 	@Override
 	public String toString()

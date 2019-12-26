@@ -13,13 +13,13 @@ public class ServiceException extends RuntimeException
 	{
 		super(message);
 		this.status = status;
-		this.errorCode=errorCode;
+		this.errorCode = errorCode;
 	}
-
 
 	@Override
 	public String getMessage()
 	{
-		return String.format("Exception message: {%s}, http status code {%s}, error code {%s}", super.getMessage(), status.toString(), errorCode.name());
+		return String.format("Exception message: {%s}, http status code {%s}, error code {%s}", super.getMessage(),
+							 status.toString(), errorCode.name());
 	}
 }

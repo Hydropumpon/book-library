@@ -1,8 +1,6 @@
 package com.example.library.model;
 
 
-import com.example.library.serializer.AuthorSetSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = "authors")
+@EqualsAndHashCode(exclude = {"authors", "borrowedSet"})
 public class Book
 {
 	@Id
@@ -36,13 +34,22 @@ public class Book
 	@Column(name = "description")
 	private String description;
 
-	@JsonSerialize(using = AuthorSetSerializer.class)
-	@ManyToMany(mappedBy = "books", fetch = FetchType.LAZY)
-	private Set<Author> authors = new HashSet<Author>();
-
 	@NotNull
 	@Min(0)
 	private Integer quantity;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns =
+	@JoinColumn(name = "author_id"))
+	private Set<Author> authors = new HashSet<>();
+
+	@OneToMany(targetEntity = Borrowed.class, mappedBy = "book", orphanRemoval = true)
+	private Set<Borrowed> borrowedSet = new HashSet<>();
+
+	public void removeAuthor(Author author)
+	{
+		authors.remove(author);
+	}
 
 	@Override
 	public String toString()

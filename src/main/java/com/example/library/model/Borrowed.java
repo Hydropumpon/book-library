@@ -9,27 +9,26 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @EqualsAndHashCode
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class Borrowed
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "book_id")
 	private Book book;
 
-	private LocalDate borrowDate = LocalDate.now();
+	private LocalDate borrowDate;
 
 	private LocalDate returnDate;
 
-	private LocalDate returnTillDate = LocalDate.now().plusDays(30);
+	private LocalDate returnTillDate;
 
 }

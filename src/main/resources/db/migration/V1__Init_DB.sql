@@ -26,19 +26,19 @@ create table book
 
 alter table book owner to postgres;
 
-create table author_book
+create table book_author
 (
-    author_id bigint not null
-        constraint fkg7j6ud9d32ll232o9mgo90s57
-            references author,
     book_id bigint not null
-        constraint fkn8665s8lv781v4eojs8jo3jao
+        constraint fkhwgu59n9o80xv75plf9ggj7xn
             references book,
-    constraint author_book_pkey
-        primary key (author_id, book_id)
+    author_id bigint not null
+        constraint fkbjqhp85wjv8vpr0beygh6jsgo
+            references author,
+    constraint book_author_pkey
+        primary key (book_id, author_id)
 );
 
-alter table author_book owner to postgres;
+alter table book_author owner to postgres;
 
 create table customer
 (

@@ -8,17 +8,23 @@ import com.example.library.service.BorrowedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/library/borrow")
 public class BorrowedController
 {
-	@Autowired
 	private BorrowedService borrowedService;
 
-	@Autowired
 	private BorrowedConverter borrowedConverter;
+
+	@Autowired
+	public BorrowedController(BorrowedService borrowedService, BorrowedConverter borrowedConverter)
+	{
+		this.borrowedService = borrowedService;
+		this.borrowedConverter = borrowedConverter;
+	}
 
 	@PostMapping(value = "/take")
 	public BorrowedDto borrowBook(@RequestBody BorrowedDto borrowedDto)
@@ -32,4 +38,34 @@ public class BorrowedController
 	{
 		return borrowedConverter.toDto(borrowedService.returnBook(borrowedId), new CycleAvoidingMappingContext());
 	}
+
+	@GetMapping(value = "/active")
+	public List<BorrowedDto> getActiveBorrows()
+	{
+		List<Borrowed> borrowedList = borrowedService.getActiveBorrows();
+		return borrowedList.stream()
+						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+						   .collect(Collectors.toList());
+
+	}
+
+	@GetMapping(value = "/expired")
+	public List<BorrowedDto> getExpiredBorrows()
+	{
+		List<Borrowed> borrowedList = borrowedService.getExpiredBorrows();
+		return borrowedList.stream()
+						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+						   .collect(Collectors.toList());
+
+	}
+
+	@GetMapping
+	public List<BorrowedDto> getAllBorrows()
+	{
+		List<Borrowed> borrowedList = borrowedService.getAllBorrows();
+		return borrowedList.stream()
+						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+						   .collect(Collectors.toList());
+	}
+
 }

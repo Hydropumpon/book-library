@@ -8,8 +8,10 @@ import com.example.library.dto.AuthorDto;
 import com.example.library.dto.BookDto;
 import com.example.library.model.Book;
 import com.example.library.service.AuthorService;
-import com.example.library.service.BookService;
+import com.example.library.views.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,27 +22,33 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/library/author")
+@PropertySource("classpath:application.properties")
 public class AuthorController
 {
-	@Autowired
 	private AuthorService authorService;
 
-	@Autowired
-	private BookService bookService;
-
-	@Autowired
 	private AuthorConverter authorConverter;
 
-	@Autowired
 	private BookConverter bookConverter;
 
-	@GetMapping
-	public List<AuthorDto> getAllAuthors()
+	@Autowired
+	public AuthorController(AuthorService authorService, AuthorConverter authorConverter, BookConverter bookConverter)
 	{
-		return authorService.getAllAuthors().stream().map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext())).collect(
-				Collectors.toList());
+		this.bookConverter = bookConverter;
+		this.authorService = authorService;
+		this.authorConverter = authorConverter;
 	}
 
+	@GetMapping
+	@JsonView(Views.IdName.class)
+	public List<AuthorDto> getAllAuthors()
+	{
+		return authorService.getAllAuthors().stream()
+							.map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext()))
+							.collect(Collectors.toList());
+	}
+
+	@JsonView(Views.FullData.class)
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id)
 	{
@@ -50,6 +58,7 @@ public class AuthorController
 	}
 
 	@PostMapping
+	@JsonView(Views.IdName.class)
 	public ResponseEntity<AuthorDto> addAuthor(@Valid @RequestBody AuthorDto authorDto)
 	{
 		return new ResponseEntity<>(authorConverter.toDto(authorService.addAuthor(
@@ -57,6 +66,7 @@ public class AuthorController
 														  new CycleAvoidingMappingContext()), HttpStatus.OK);
 	}
 
+	@JsonView(Views.IdName.class)
 	@DeleteMapping(value = "/{authorId}")
 	public ResponseEntity<AuthorDto> deleteAuthor(@PathVariable Long authorId)
 	{
@@ -65,33 +75,19 @@ public class AuthorController
 				HttpStatus.OK);
 	}
 
+	@JsonView(Views.FullData.class)
 	@PutMapping(value = "/{authorId}")
 	public AuthorDto updateAuthor(@PathVariable Long authorId, @Valid @RequestBody AuthorDto authorDto)
 	{
 		return authorConverter.toDto(authorService.updateAuthor(authorId, authorConverter
 				.fromDto(authorDto, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
-
-
-	}
-
-	@PutMapping(value = "/{authorId}/book")
-	public ResponseEntity<AuthorDto> addRelativeBook(@PathVariable Long authorId, @Valid @RequestBody BookDto bookDto)
-	{
-		Book book = bookConverter.fromDto(bookDto, new CycleAvoidingMappingContext());
-
-		return new ResponseEntity<>(authorConverter.toDto(authorService.addRelativeBook(authorId, book), new CycleAvoidingMappingContext()), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/{authorId}/book")
-	public List<BookDto> getBooksByAuthor(@PathVariable Long authorId)
+	public List<BookDto> getAuthorBooks(@PathVariable Long authorId)
 	{
-		return bookService.findAllByAuthor(authorId).stream().map(book -> bookConverter.toDto(book, new CycleAvoidingMappingContext())).collect(Collectors.toList());
+		List<Book> books = authorService.getAuthorBooks(authorId);
+		return books.stream().map(book -> bookConverter.toDto(book, new CycleAvoidingMappingContext()))
+					.collect(Collectors.toList());
 	}
-
-	@DeleteMapping(value = "/{authorId}/book/{bookId}")
-	public AuthorDto deleteRelativeBook(@PathVariable Long authorId, @PathVariable Long bookId)
-	{
-		return authorConverter.toDto(authorService.deleteRelativeBook(authorId, bookId), new CycleAvoidingMappingContext());
-	}
-
 }

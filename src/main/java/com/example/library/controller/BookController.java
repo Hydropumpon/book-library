@@ -7,7 +7,6 @@ import com.example.library.dto.AuthorDto;
 import com.example.library.dto.BookDto;
 import com.example.library.model.Author;
 import com.example.library.model.Book;
-import com.example.library.service.AuthorService;
 import com.example.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +19,19 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/library/book")
 public class BookController
 {
-	@Autowired
 	private BookService bookService;
 
-	@Autowired
-	private AuthorService authorService;
-
-	@Autowired
 	private AuthorConverter authorConverter;
 
-	@Autowired
 	private BookConverter bookConverter;
+
+	@Autowired
+	public BookController(BookService bookService, AuthorConverter authorConverter, BookConverter bookConverter)
+	{
+		this.bookService = bookService;
+		this.authorConverter = authorConverter;
+		this.bookConverter = bookConverter;
+	}
 
 	@GetMapping
 	public List<BookDto> getAllBooks()
@@ -66,26 +67,12 @@ public class BookController
 		return bookConverter.toDto(bookService.updateBook(bookId, book), new CycleAvoidingMappingContext());
 	}
 
-	@PutMapping(value = "/{bookId}/author")
-	public BookDto addRelativeAuthor(@PathVariable Long bookId, @Valid @RequestBody AuthorDto authorDto)
-	{
-		Author author = authorConverter.fromDto(authorDto, new CycleAvoidingMappingContext());
-		return bookConverter.toDto(bookService.addRelativeAuthor(bookId, author), new CycleAvoidingMappingContext());
-	}
-
-	@DeleteMapping(value = "/{bookId}/author/{authorId}")
-	public BookDto deleteRelativeAuthor(@PathVariable Long bookId, @PathVariable Long authorId)
-	{
-		return bookConverter
-				.toDto(bookService.deleteRelativeAuthor(bookId, authorId), new CycleAvoidingMappingContext());
-	}
-
 	@GetMapping(value = "/{bookId}/author")
 	public List<AuthorDto> getBookAuthors(@PathVariable Long bookId)
 	{
-		return authorService.getBookAuthors(bookId).stream()
-							.map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext()))
-							.collect(Collectors.toList());
+		List<Author> authors = bookService.getBookAuthors(bookId);
+		return authors.stream().map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext()))
+					  .collect(Collectors.toList());
 	}
 
 }

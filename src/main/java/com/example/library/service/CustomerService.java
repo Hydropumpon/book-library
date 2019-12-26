@@ -1,27 +1,30 @@
 package com.example.library.service;
 
 import com.example.library.common.exception.ConflictException;
+import com.example.library.common.exception.ErrorMessage;
 import com.example.library.common.exception.NotFoundException;
 import com.example.library.common.exception.ServiceErrorCode;
-import com.example.library.dto.CustomerDto;
+import com.example.library.model.Borrowed;
 import com.example.library.model.Customer;
 import com.example.library.repository.CustomerRepository;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CustomerService
 {
-	public final String CUSTOMER_NOT_FOUND = "Customer not found";
-	public final String CUSTOMER_EMAIL_ALREADY_EXIST = "Customer with same email already exists";
-	public final String CUSTOMER_LOGIN_ALREADY_EXIST = "Customer with same login already exists";
+	private CustomerRepository customerRepository;
 
 	@Autowired
-	private CustomerRepository customerRepository;
+	public CustomerService(CustomerRepository customerRepository)
+	{
+		this.customerRepository = customerRepository;
+	}
 
 	public List<Customer> getCustomers()
 	{
@@ -30,47 +33,73 @@ public class CustomerService
 
 	public Customer getCustomer(Long id)
 	{
-		return customerRepository.findById(id).orElseThrow(
-				() -> new NotFoundException(CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+		return getCustomerById(id);
 	}
 
+	@Transactional
 	public Customer addCustomer(Customer customer)
 	{
-		if (customerRepository.existsByEmail(customer.getEmail()))
-		{
-			throw new ConflictException(CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
-		}
-		if (customerRepository.existsByLogin(customer.getLogin()))
-		{
-			throw new ConflictException(CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
-		}
+		checkCustomerExistByEmail(customer);
+		checkCustomerExistByLogin(customer);
 		return customerRepository.save(customer);
 	}
 
+	@Transactional
 	public Customer deleteCustomer(Long customerId)
 	{
-		Customer customer = customerRepository.findById(customerId).orElseThrow(
-				() -> new NotFoundException(CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+		Customer customer = getCustomerById(customerId);
 		customerRepository.delete(customer);
 		return customer;
 	}
 
+	@Transactional
 	public Customer updateCustomer(Long customerId, Customer customer)
 	{
-		Customer customerDb = customerRepository.findById(customerId).orElseThrow(
-				() -> new NotFoundException(CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+		Customer customerDb = getCustomerById(customerId);
+		checkCustomerDuplicate(customer, customerDb);
+		return customerRepository.save(customer);
+	}
+
+	private void checkCustomerDuplicate(Customer customer, Customer customerDb)
+	{
 		Optional<Customer> customerWithSameLogin = customerRepository.findByLogin(customer.getLogin());
 		Optional<Customer> customerWithSameEmail = customerRepository.findByEmail(customer.getEmail());
 
-		if (customerWithSameLogin.isPresent() && (!customerDb.getId().equals(customerWithSameLogin.get().getId())))
+		if (customerWithSameLogin.isPresent() && !(customerDb.getId().equals(customerWithSameLogin.get().getId())))
 		{
-			throw new ConflictException(CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
+			throw new ConflictException(ErrorMessage.CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
 		}
-		if (customerWithSameEmail.isPresent() && (!customerDb.getId().equals(customerWithSameEmail.get().getId())))
+		if (customerWithSameEmail.isPresent() && !(customerDb.getId().equals(customerWithSameEmail.get().getId())))
 		{
-			throw new ConflictException(CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
+			throw new ConflictException(ErrorMessage.CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
 		}
-		customer.setId(customerDb.getId());
-		return customerRepository.save(customer);
+	}
+
+	public List<Borrowed> getBorrows(Long customerId)
+	{
+		Customer customerDb = getCustomerById(customerId);
+		return new ArrayList<>(customerDb.getBorrowedSet());
+	}
+
+	private Customer getCustomerById(Long customerId)
+	{
+		return customerRepository.findById(customerId).orElseThrow(
+				() -> new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+	}
+
+	private void checkCustomerExistByLogin(Customer customer)
+	{
+		if (customerRepository.existsByLogin(customer.getLogin()))
+		{
+			throw new ConflictException(ErrorMessage.CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
+		}
+	}
+
+	private void checkCustomerExistByEmail(Customer customer)
+	{
+		if (customerRepository.existsByEmail(customer.getEmail()))
+		{
+			throw new ConflictException(ErrorMessage.CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
+		}
 	}
 }

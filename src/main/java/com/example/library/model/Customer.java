@@ -4,6 +4,8 @@ package com.example.library.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -12,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "Customer")
 @Builder
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "borrowedSet")
 public class Customer
 {
 	@Id
@@ -22,9 +24,14 @@ public class Customer
 	@Column(unique = true)
 	private String login;
 
+	@Column(name = "first_name")
 	private String firstName;
 
+	@Column(name = "last_name")
 	private String lastName;
+
+	@OneToMany(targetEntity = Borrowed.class, mappedBy = "customer", orphanRemoval = true)
+	private Set<Borrowed> borrowedSet = new HashSet<>();
 
 	@Column(unique = true)
 	private String email;
