@@ -1,13 +1,16 @@
 package com.example.library.controller;
 
-import com.example.library.converter.BorrowedConverter;
-import com.example.library.converter.CycleAvoidingMappingContext;
-import com.example.library.dto.BorrowedDto;
+import com.example.library.converter.response.BorrowedFullResponseDtoConverter;
+import com.example.library.converter.response.BorrowedMinimalResponseDtoConverter;
+import com.example.library.converter.request.BorrowedRequestDtoConverter;
+import com.example.library.dto.request.BorrowedRequestDto;
+import com.example.library.dto.response.BorrowedFullResponseDto;
+import com.example.library.dto.response.BorrowedMinimalResponseDto;
 import com.example.library.model.Borrowed;
 import com.example.library.service.BorrowedService;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.example.library.views.transfer.New;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,59 +22,61 @@ public class BorrowedController
 {
 	private BorrowedService borrowedService;
 
-	private BorrowedConverter borrowedConverter;
+	private BorrowedRequestDtoConverter borrowedRequestDtoConverter;
+
+	private BorrowedMinimalResponseDtoConverter borrowedMinimalResponseDtoConverter;
+
+	private BorrowedFullResponseDtoConverter borrowedFullResponseDtoConverter;
 
 	@Autowired
-	public BorrowedController(BorrowedService borrowedService, BorrowedConverter borrowedConverter)
+	public BorrowedController(BorrowedService borrowedService, BorrowedRequestDtoConverter borrowedRequestDtoConverter,
+							  BorrowedMinimalResponseDtoConverter borrowedMinimalResponseDtoConverter,
+							  BorrowedFullResponseDtoConverter borrowedFullResponseDtoConverter)
 	{
 		this.borrowedService = borrowedService;
-		this.borrowedConverter = borrowedConverter;
+		this.borrowedRequestDtoConverter = borrowedRequestDtoConverter;
+		this.borrowedMinimalResponseDtoConverter = borrowedMinimalResponseDtoConverter;
+		this.borrowedFullResponseDtoConverter = borrowedFullResponseDtoConverter;
 	}
 
 	@PostMapping(value = "/take")
-	@JsonView(Views.FullData.class)
-	public BorrowedDto borrowBook(@RequestBody BorrowedDto borrowedDto)
+	public BorrowedFullResponseDto borrowBook(@RequestBody @Validated(New.class) BorrowedRequestDto borrowedRequestDto)
 	{
-		Borrowed borrowed = borrowedConverter.fromDto(borrowedDto, new CycleAvoidingMappingContext());
-		return borrowedConverter.toDto(borrowedService.borrowBook(borrowed), new CycleAvoidingMappingContext());
+		Borrowed borrowed = borrowedRequestDtoConverter.fromDto(borrowedRequestDto);
+		return borrowedFullResponseDtoConverter.toDto(borrowedService.borrowBook(borrowed));
 	}
 
-	@JsonView(Views.FullData.class)
 	@PostMapping(value = "/return/{borrowedId}")
-	public BorrowedDto returnBook(@PathVariable Long borrowedId)
+	public BorrowedFullResponseDto returnBook(@PathVariable Long borrowedId)
 	{
-		return borrowedConverter.toDto(borrowedService.returnBook(borrowedId), new CycleAvoidingMappingContext());
+		return borrowedFullResponseDtoConverter.toDto(borrowedService.returnBook(borrowedId));
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/active")
-	public List<BorrowedDto> getActiveBorrows()
+	public List<BorrowedMinimalResponseDto> getActiveBorrows()
 	{
 		List<Borrowed> borrowedList = borrowedService.getActiveBorrows();
-		return borrowedList.stream()
-						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+		return borrowedList.stream().map(borrowed -> borrowedMinimalResponseDtoConverter.toDto(borrowed))
 						   .collect(Collectors.toList());
 
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/expired")
-	public List<BorrowedDto> getExpiredBorrows()
+	public List<BorrowedMinimalResponseDto> getExpiredBorrows()
 	{
 		List<Borrowed> borrowedList = borrowedService.getExpiredBorrows();
 		return borrowedList.stream()
-						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+						   .map(borrowed -> borrowedMinimalResponseDtoConverter.toDto(borrowed))
 						   .collect(Collectors.toList());
 
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping
-	public List<BorrowedDto> getAllBorrows()
+	public List<BorrowedMinimalResponseDto> getAllBorrows()
 	{
 		List<Borrowed> borrowedList = borrowedService.getAllBorrows();
 		return borrowedList.stream()
-						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+						   .map(borrowed -> borrowedMinimalResponseDtoConverter.toDto(borrowed))
 						   .collect(Collectors.toList());
 	}
 

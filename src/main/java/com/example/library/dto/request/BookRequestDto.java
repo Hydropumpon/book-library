@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -29,6 +30,7 @@ public class BookRequestDto
 	private String description;
 
 	@NotNull(groups = {Update.class, New.class})
+	@Min(value = 1, groups = {Update.class, New.class})
 	private Integer quantity;
 
 	private List<Long> authors;

@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Customer")
 @Builder
-@EqualsAndHashCode(exclude = "borroweds")
+@EqualsAndHashCode(exclude = "borrows")
 public class Customer
 {
 	@Id
@@ -31,8 +31,8 @@ public class Customer
 	private String lastName;
 
 	@Builder.Default
-	@OneToMany(targetEntity = Borrowed.class, mappedBy = "customer", orphanRemoval = true)
-	private Set<Borrowed> borroweds = new HashSet<>();
+	@OneToMany(targetEntity = Borrowed.class, mappedBy = "customer", cascade = CascadeType.REMOVE)
+	private Set<Borrowed> borrows = new HashSet<>();
 
 	@Column(unique = true)
 	private String email;

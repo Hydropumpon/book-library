@@ -1,4 +1,4 @@
-package com.example.library.converter;
+package com.example.library.converter.request;
 
 import com.example.library.dto.request.AuthorRequestDto;
 import com.example.library.model.Author;

@@ -23,13 +23,14 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService
 {
 	private BookRepository bookRepository;
-	@Autowired
+
 	private AuthorRepository authorRepository;
 
 	@Autowired
-	public BookServiceImpl(BookRepository bookRepository)
+	public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository)
 	{
 		this.bookRepository = bookRepository;
+		this.authorRepository = authorRepository;
 	}
 
 	@Override
@@ -50,12 +51,7 @@ public class BookServiceImpl implements BookService
 	public Book addBook(Book book)
 	{
 		checkBookExistByTitle(book);
-		List<Author> authors = new ArrayList<>();
-		for (Author author : book.getAuthors())
-		{
-			authors.add(authorRepository.findById(author.getId()).orElseThrow(
-					() -> new NotFoundException(ErrorMessage.AUTHOR_NOT_FOUND, ServiceErrorCode.NOT_FOUND)));
-		}
+		List<Author> authors = getAuthorsById(book);
 		authors.forEach(author -> author.addBook(book));
 		book.setAuthors(new HashSet<>(authors));
 		return bookRepository.save(book);
@@ -111,4 +107,14 @@ public class BookServiceImpl implements BookService
 		}
 	}
 
+	private List<Author> getAuthorsById(Book book)
+	{
+		List<Author> authors = new ArrayList<>();
+		for (Author author : book.getAuthors())
+		{
+			authors.add(authorRepository.findById(author.getId()).orElseThrow(
+					() -> new NotFoundException(ErrorMessage.AUTHOR_NOT_FOUND, ServiceErrorCode.NOT_FOUND)));
+		}
+		return authors;
+	}
 }

@@ -1,17 +1,22 @@
 package com.example.library.controller;
 
-import com.example.library.converter.BorrowedConverter;
-import com.example.library.converter.CustomerConverter;
-import com.example.library.converter.CycleAvoidingMappingContext;
-import com.example.library.dto.BorrowedDto;
-import com.example.library.dto.CustomerDto;
+import com.example.library.converter.response.BorrowedMinimalResponseDtoConverter;
+import com.example.library.converter.response.CustomerFullResponseDtoConverter;
+import com.example.library.converter.response.CustomerMinimalResponseDtoConverter;
+import com.example.library.converter.request.CustomerRequestDtoConveter;
+import com.example.library.dto.request.CustomerRequestDto;
+import com.example.library.dto.response.BorrowedMinimalResponseDto;
+import com.example.library.dto.response.CustomerFullResponseDto;
+import com.example.library.dto.response.CustomerMinimalResponseDto;
 import com.example.library.model.Borrowed;
 import com.example.library.model.Customer;
 import com.example.library.service.CustomerService;
+import com.example.library.views.transfer.New;
+import com.example.library.views.transfer.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,58 +26,69 @@ public class CustomerController
 {
 	private CustomerService customerService;
 
-	private CustomerConverter customerConverter;
+	private BorrowedMinimalResponseDtoConverter borrowedMinimalResponseDtoConverter;
 
-	private BorrowedConverter borrowedConverter;
+	private CustomerRequestDtoConveter customerRequestDtoConveter;
+
+	private CustomerFullResponseDtoConverter customerFullResponseDtoConverter;
+
+	private CustomerMinimalResponseDtoConverter customerMinimalResponseDtoConverter;
 
 	@Autowired
-	public CustomerController(CustomerService customerService, CustomerConverter customerConverter,
-							  BorrowedConverter borrowedConverter)
+	public CustomerController(CustomerService customerService,
+							  BorrowedMinimalResponseDtoConverter borrowedMinimalResponseDtoConverter,
+							  CustomerRequestDtoConveter customerRequestDtoConveter,
+							  CustomerFullResponseDtoConverter customerFullResponseDtoConverter,
+							  CustomerMinimalResponseDtoConverter customerMinimalResponseDtoConverter)
 	{
 		this.customerService = customerService;
-		this.customerConverter = customerConverter;
-		this.borrowedConverter = borrowedConverter;
+		this.borrowedMinimalResponseDtoConverter = borrowedMinimalResponseDtoConverter;
+		this.customerRequestDtoConveter = customerRequestDtoConveter;
+		this.customerFullResponseDtoConverter = customerFullResponseDtoConverter;
+		this.customerMinimalResponseDtoConverter = customerMinimalResponseDtoConverter;
 	}
 
 	@GetMapping
-	public List<CustomerDto> getCustomers()
+	public List<CustomerMinimalResponseDto> getCustomers()
 	{
 		List<Customer> customers = customerService.getCustomers();
-		return customers.stream().map(customer -> customerConverter.toDto(customer)).collect(Collectors.toList());
+		return customers.stream().map(customer -> customerMinimalResponseDtoConverter.toDto(customer))
+						.collect(Collectors.toList());
 	}
 
 	@GetMapping(value = "/{id}")
-	public CustomerDto getCustomer(@PathVariable Long id)
+	public CustomerFullResponseDto getCustomer(@PathVariable Long id)
 	{
-		return customerConverter.toDto(customerService.getCustomer(id));
+		return customerFullResponseDtoConverter.toDto(customerService.getCustomer(id));
 	}
 
 	@PostMapping
-	public CustomerDto addCustomer(@Valid @RequestBody CustomerDto customerDto)
+	public CustomerFullResponseDto addCustomer(
+			@Validated(value = New.class) @RequestBody CustomerRequestDto customerRequestDto)
 	{
-		Customer customer = customerConverter.fromDto(customerDto);
-		return customerConverter.toDto(customerService.addCustomer(customer));
+		Customer customer = customerRequestDtoConveter.fromDto(customerRequestDto);
+		return customerFullResponseDtoConverter.toDto(customerService.addCustomer(customer));
 	}
 
 	@DeleteMapping(value = "/{customerId}")
-	public CustomerDto deleteCustomer(@PathVariable Long customerId)
+	public CustomerMinimalResponseDto deleteCustomer(@PathVariable Long customerId)
 	{
-		return customerConverter.toDto(customerService.deleteCustomer(customerId));
+		return customerMinimalResponseDtoConverter.toDto(customerService.deleteCustomer(customerId));
 	}
 
 	@PutMapping(value = "/{customerId}")
-	public CustomerDto updateCustomer(@PathVariable Long customerId, @Valid @RequestBody CustomerDto customerDto)
+	public CustomerFullResponseDto updateCustomer(@PathVariable Long customerId,
+												  @Validated(value = Update.class) @RequestBody CustomerRequestDto customerRequestDto)
 	{
-		Customer customer = customerConverter.fromDto(customerDto);
-		return customerConverter.toDto(customerService.updateCustomer(customerId, customer));
+		Customer customer = customerRequestDtoConveter.fromDto(customerRequestDto);
+		return customerFullResponseDtoConverter.toDto(customerService.updateCustomer(customerId, customer));
 	}
 
 	@GetMapping(value = "/{customerId}/borrows")
-	public List<BorrowedDto> getCustomerBorrows(@PathVariable Long customerId)
+	public List<BorrowedMinimalResponseDto> getCustomerBorrows(@PathVariable Long customerId)
 	{
 		List<Borrowed> borrowedList = customerService.getBorrows(customerId);
-		return borrowedList.stream()
-						   .map(borrowed -> borrowedConverter.toDto(borrowed, new CycleAvoidingMappingContext()))
+		return borrowedList.stream().map(borrowed -> borrowedMinimalResponseDtoConverter.toDto(borrowed))
 						   .collect(Collectors.toList());
 	}
 

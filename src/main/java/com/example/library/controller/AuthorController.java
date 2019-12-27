@@ -1,10 +1,10 @@
 package com.example.library.controller;
 
 
-import com.example.library.converter.AuthorFullResponseDtoConverter;
-import com.example.library.converter.AuthorMinimalResponseConverter;
-import com.example.library.converter.AuthorRequestDtoConverter;
-import com.example.library.converter.BookMinimalResponseConverter;
+import com.example.library.converter.response.AuthorFullResponseDtoConverter;
+import com.example.library.converter.response.AuthorMinimalResponseDtoConverter;
+import com.example.library.converter.request.AuthorRequestDtoConverter;
+import com.example.library.converter.response.BookMinimalResponseDtoConverter;
 import com.example.library.dto.request.AuthorRequestDto;
 import com.example.library.dto.response.AuthorFullResponseDto;
 import com.example.library.dto.response.AuthorMinimalResponseDto;
@@ -30,29 +30,29 @@ public class AuthorController
 
 	private AuthorRequestDtoConverter authorRequestDtoConverter;
 
-	private AuthorMinimalResponseConverter authorMinimalResponseConverter;
+	private AuthorMinimalResponseDtoConverter authorMinimalResponseDtoConverter;
 
 	private AuthorFullResponseDtoConverter authorFullResponseDtoConverter;
 
-	private BookMinimalResponseConverter bookMinimalResponseConverter;
+	private BookMinimalResponseDtoConverter bookMinimalResponseConverter;
 
 	@Autowired
 	public AuthorController(AuthorService authorService, AuthorRequestDtoConverter authorRequestDtoConverter,
-							AuthorMinimalResponseConverter authorMinimalResponseConverter,
+							AuthorMinimalResponseDtoConverter authorMinimalResponseDtoConverter,
 							AuthorFullResponseDtoConverter authorFullResponseDtoConverter,
-							BookMinimalResponseConverter bookMinimalResponseConverter)
+							BookMinimalResponseDtoConverter bookMinimalResponseConverter)
 	{
 		this.bookMinimalResponseConverter = bookMinimalResponseConverter;
 		this.authorService = authorService;
 		this.authorRequestDtoConverter = authorRequestDtoConverter;
-		this.authorMinimalResponseConverter = authorMinimalResponseConverter;
+		this.authorMinimalResponseDtoConverter = authorMinimalResponseDtoConverter;
 		this.authorFullResponseDtoConverter = authorFullResponseDtoConverter;
 	}
 
 	@GetMapping
 	public List<AuthorMinimalResponseDto> getAllAuthors()
 	{
-		return authorService.getAllAuthors().stream().map(author -> authorMinimalResponseConverter.toDto(author))
+		return authorService.getAllAuthors().stream().map(author -> authorMinimalResponseDtoConverter.toDto(author))
 							.collect(Collectors.toList());
 	}
 
@@ -66,14 +66,14 @@ public class AuthorController
 	public ResponseEntity<AuthorMinimalResponseDto> addAuthor(
 			@Validated(New.class) @RequestBody AuthorRequestDto authorDto)
 	{
-		return new ResponseEntity<>(authorMinimalResponseConverter.toDto(authorService.addAuthor(
+		return new ResponseEntity<>(authorMinimalResponseDtoConverter.toDto(authorService.addAuthor(
 				authorRequestDtoConverter.fromDto(authorDto))), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{authorId}")
 	public ResponseEntity<AuthorMinimalResponseDto> deleteAuthor(@PathVariable Long authorId)
 	{
-		return new ResponseEntity<>(authorMinimalResponseConverter.toDto(authorService.deleteAuthor(authorId)),
+		return new ResponseEntity<>(authorMinimalResponseDtoConverter.toDto(authorService.deleteAuthor(authorId)),
 									HttpStatus.OK);
 	}
 
@@ -81,7 +81,7 @@ public class AuthorController
 	public AuthorMinimalResponseDto updateAuthor(@PathVariable Long authorId,
 												 @Validated(Update.class) @RequestBody AuthorRequestDto authorDto)
 	{
-		return authorMinimalResponseConverter
+		return authorMinimalResponseDtoConverter
 				.toDto(authorService.updateAuthor(authorId, authorRequestDtoConverter.fromDto(authorDto)));
 	}
 

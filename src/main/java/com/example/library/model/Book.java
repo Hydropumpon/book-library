@@ -2,6 +2,9 @@ package com.example.library.model;
 
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -42,10 +45,11 @@ public class Book
 	@JoinTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns =
 	@JoinColumn(name = "author_id"))
 	@Builder.Default
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<Author> authors = new HashSet<>();
 
 	@Builder.Default
-	@OneToMany(targetEntity = Borrowed.class, mappedBy = "book", orphanRemoval = true)
+	@OneToMany(targetEntity = Borrowed.class, mappedBy = "book", cascade = CascadeType.REMOVE)
 	private Set<Borrowed> borrowedSet = new HashSet<>();
 
 	public Book(Long id)

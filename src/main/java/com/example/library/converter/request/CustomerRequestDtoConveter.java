@@ -1,4 +1,4 @@
-package com.example.library.converter;
+package com.example.library.converter.request;
 
 import com.example.library.dto.request.CustomerRequestDto;
 import com.example.library.model.Customer;
@@ -7,8 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD)
-public interface CustomerRequestDtoConverter
+public interface CustomerRequestDtoConveter
 {
-	@Mapping(target = "borroweds", ignore = true)
+	@Mapping(target = "borrows", ignore = true)
 	Customer fromDto(CustomerRequestDto customerRequestDto);
 }

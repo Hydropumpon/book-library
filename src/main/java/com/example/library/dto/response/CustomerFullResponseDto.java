@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "borrows")
 @NoArgsConstructor
 public class CustomerFullResponseDto
 {
@@ -25,5 +25,5 @@ public class CustomerFullResponseDto
 
 	private String email;
 
-	private List<BorrowedMinimalResponseDto> borroweds;
+	private List<BorrowedMinimalResponseDto> borrows;
 }

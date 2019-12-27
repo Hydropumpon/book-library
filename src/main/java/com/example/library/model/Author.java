@@ -2,6 +2,8 @@ package com.example.library.model;
 
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -33,6 +35,7 @@ public class Author implements Serializable
 
 	@Builder.Default
 	@ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
+	@Fetch(FetchMode.SUBSELECT)
 	private Set<Book> books = new HashSet<>();
 
 	public Author(String name)
