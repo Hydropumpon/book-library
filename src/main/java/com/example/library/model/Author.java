@@ -40,6 +40,11 @@ public class Author implements Serializable
 		this.name = name;
 	}
 
+	public Author(Long id)
+	{
+		this.id = id;
+	}
+
 	public void addBook(Book book)
 	{
 		books.add(book);

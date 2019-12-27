@@ -1,21 +1,24 @@
 package com.example.library.controller;
 
 
-import com.example.library.converter.AuthorConverter;
-import com.example.library.converter.BookConverter;
-import com.example.library.converter.CycleAvoidingMappingContext;
-import com.example.library.dto.AuthorDto;
-import com.example.library.dto.BookDto;
+import com.example.library.converter.AuthorFullResponseDtoConverter;
+import com.example.library.converter.AuthorMinimalResponseConverter;
+import com.example.library.converter.AuthorRequestDtoConverter;
+import com.example.library.converter.BookMinimalResponseConverter;
+import com.example.library.dto.request.AuthorRequestDto;
+import com.example.library.dto.response.AuthorFullResponseDto;
+import com.example.library.dto.response.AuthorMinimalResponseDto;
+import com.example.library.dto.response.BookMinimalResponseDto;
 import com.example.library.model.Book;
 import com.example.library.service.AuthorService;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.example.library.views.transfer.New;
+import com.example.library.views.transfer.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,68 +28,67 @@ public class AuthorController
 {
 	private AuthorService authorService;
 
-	private AuthorConverter authorConverter;
+	private AuthorRequestDtoConverter authorRequestDtoConverter;
 
-	private BookConverter bookConverter;
+	private AuthorMinimalResponseConverter authorMinimalResponseConverter;
+
+	private AuthorFullResponseDtoConverter authorFullResponseDtoConverter;
+
+	private BookMinimalResponseConverter bookMinimalResponseConverter;
 
 	@Autowired
-	public AuthorController(AuthorService authorService, AuthorConverter authorConverter, BookConverter bookConverter)
+	public AuthorController(AuthorService authorService, AuthorRequestDtoConverter authorRequestDtoConverter,
+							AuthorMinimalResponseConverter authorMinimalResponseConverter,
+							AuthorFullResponseDtoConverter authorFullResponseDtoConverter,
+							BookMinimalResponseConverter bookMinimalResponseConverter)
 	{
-		this.bookConverter = bookConverter;
+		this.bookMinimalResponseConverter = bookMinimalResponseConverter;
 		this.authorService = authorService;
-		this.authorConverter = authorConverter;
+		this.authorRequestDtoConverter = authorRequestDtoConverter;
+		this.authorMinimalResponseConverter = authorMinimalResponseConverter;
+		this.authorFullResponseDtoConverter = authorFullResponseDtoConverter;
 	}
 
 	@GetMapping
-	@JsonView(Views.IdName.class)
-	public List<AuthorDto> getAllAuthors()
+	public List<AuthorMinimalResponseDto> getAllAuthors()
 	{
-		return authorService.getAllAuthors().stream()
-							.map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext()))
+		return authorService.getAllAuthors().stream().map(author -> authorMinimalResponseConverter.toDto(author))
 							.collect(Collectors.toList());
 	}
 
-	@JsonView(Views.FullData.class)
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id)
+	public ResponseEntity<AuthorFullResponseDto> getAuthor(@PathVariable Long id)
 	{
-		return new ResponseEntity<>(
-				authorConverter.toDto(authorService.getOneAuthor(id), new CycleAvoidingMappingContext()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(authorFullResponseDtoConverter.toDto(authorService.getOneAuthor(id)), HttpStatus.OK);
 	}
 
 	@PostMapping
-	@JsonView(Views.IdName.class)
-	public ResponseEntity<AuthorDto> addAuthor(@Valid @RequestBody AuthorDto authorDto)
+	public ResponseEntity<AuthorMinimalResponseDto> addAuthor(
+			@Validated(New.class) @RequestBody AuthorRequestDto authorDto)
 	{
-		return new ResponseEntity<>(authorConverter.toDto(authorService.addAuthor(
-				authorConverter.fromDto(authorDto, new CycleAvoidingMappingContext())),
-														  new CycleAvoidingMappingContext()), HttpStatus.OK);
+		return new ResponseEntity<>(authorMinimalResponseConverter.toDto(authorService.addAuthor(
+				authorRequestDtoConverter.fromDto(authorDto))), HttpStatus.OK);
 	}
 
-	@JsonView(Views.IdName.class)
 	@DeleteMapping(value = "/{authorId}")
-	public ResponseEntity<AuthorDto> deleteAuthor(@PathVariable Long authorId)
+	public ResponseEntity<AuthorMinimalResponseDto> deleteAuthor(@PathVariable Long authorId)
 	{
-		return new ResponseEntity<>(
-				authorConverter.toDto(authorService.deleteAuthor(authorId), new CycleAvoidingMappingContext()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(authorMinimalResponseConverter.toDto(authorService.deleteAuthor(authorId)),
+									HttpStatus.OK);
 	}
 
-	@JsonView(Views.FullData.class)
 	@PutMapping(value = "/{authorId}")
-	public AuthorDto updateAuthor(@PathVariable Long authorId, @Valid @RequestBody AuthorDto authorDto)
+	public AuthorMinimalResponseDto updateAuthor(@PathVariable Long authorId,
+												 @Validated(Update.class) @RequestBody AuthorRequestDto authorDto)
 	{
-		return authorConverter.toDto(authorService.updateAuthor(authorId, authorConverter
-				.fromDto(authorDto, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
+		return authorMinimalResponseConverter
+				.toDto(authorService.updateAuthor(authorId, authorRequestDtoConverter.fromDto(authorDto)));
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/{authorId}/book")
-	public List<BookDto> getAuthorBooks(@PathVariable Long authorId)
+	public List<BookMinimalResponseDto> getAuthorBooks(@PathVariable Long authorId)
 	{
 		List<Book> books = authorService.getAuthorBooks(authorId);
-		return books.stream().map(book -> bookConverter.toDto(book, new CycleAvoidingMappingContext()))
-					.collect(Collectors.toList());
+		return books.stream().map(book -> bookMinimalResponseConverter.toDto(book)).collect(Collectors.toList());
 	}
 }

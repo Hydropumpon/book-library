@@ -1,19 +1,22 @@
 package com.example.library.controller;
 
-import com.example.library.converter.AuthorConverter;
-import com.example.library.converter.BookConverter;
-import com.example.library.converter.CycleAvoidingMappingContext;
-import com.example.library.dto.AuthorDto;
-import com.example.library.dto.BookDto;
+import com.example.library.converter.AuthorMinimalResponseConverter;
+import com.example.library.converter.BookFullResponseConverter;
+import com.example.library.converter.BookMinimalResponseConverter;
+import com.example.library.converter.BookRequestDtoConverter;
+import com.example.library.dto.request.BookRequestDto;
+import com.example.library.dto.response.AuthorMinimalResponseDto;
+import com.example.library.dto.response.BookFullResponseDto;
+import com.example.library.dto.response.BookMinimalResponseDto;
 import com.example.library.model.Author;
 import com.example.library.model.Book;
 import com.example.library.service.BookService;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.example.library.views.transfer.New;
+import com.example.library.views.transfer.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,63 +26,67 @@ public class BookController
 {
 	private BookService bookService;
 
-	private AuthorConverter authorConverter;
 
-	private BookConverter bookConverter;
+	private BookRequestDtoConverter bookRequestDtoConverter;
+
+	private BookMinimalResponseConverter bookMinimalResponseConverter;
+
+	private BookFullResponseConverter bookFullResponseConverter;
+
+	private AuthorMinimalResponseConverter authorMinimalResponseConverter;
 
 	@Autowired
-	public BookController(BookService bookService, AuthorConverter authorConverter, BookConverter bookConverter)
+	public BookController(BookService bookService, BookRequestDtoConverter bookRequestDtoConverter,
+						  BookMinimalResponseConverter bookMinimalResponseConverter,
+						  BookFullResponseConverter bookFullResponseConverter,
+						  AuthorMinimalResponseConverter authorMinimalResponseConverter)
 	{
 		this.bookService = bookService;
-		this.authorConverter = authorConverter;
-		this.bookConverter = bookConverter;
+		this.bookRequestDtoConverter = bookRequestDtoConverter;
+		this.bookMinimalResponseConverter = bookMinimalResponseConverter;
+		this.bookFullResponseConverter = bookFullResponseConverter;
+		this.authorMinimalResponseConverter = authorMinimalResponseConverter;
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping
-	public List<BookDto> getAllBooks()
+	public List<BookMinimalResponseDto> getAllBooks()
 	{
-		return bookService.getAllBooks().stream()
-						  .map(book -> bookConverter.toDto(book, new CycleAvoidingMappingContext()))
+		return bookService.getAllBooks().stream().map(book -> bookMinimalResponseConverter.toDto(book))
 						  .collect(Collectors.toList());
 	}
 
-	@JsonView(Views.FullData.class)
 	@GetMapping(value = "/{id}")
-	public BookDto getOneBook(@PathVariable Long id)
+	public BookFullResponseDto getOneBook(@PathVariable Long id)
 	{
-		return bookConverter.toDto(bookService.getOneBook(id), new CycleAvoidingMappingContext());
+		return bookFullResponseConverter.toDto(bookService.getOneBook(id));
 	}
 
 	@PostMapping
-	@JsonView(Views.FullData.class)
-	public BookDto addBook(@Valid @RequestBody BookDto bookDto)
+	public BookMinimalResponseDto addBook(@Validated(New.class) @RequestBody BookRequestDto bookRequestDto)
 	{
-		Book book = bookConverter.fromDto(bookDto, new CycleAvoidingMappingContext());
-		return bookConverter.toDto(bookService.addBook(book), new CycleAvoidingMappingContext());
+		Book book = bookRequestDtoConverter.fromDto(bookRequestDto);
+		return bookMinimalResponseConverter.toDto(bookService.addBook(book));
 	}
 
-	@JsonView(Views.IdName.class)
 	@DeleteMapping(value = "/{id}")
-	public BookDto deleteBook(@PathVariable Long id)
+	public BookMinimalResponseDto deleteBook(@PathVariable Long id)
 	{
-		return bookConverter.toDto(bookService.deleteBook(id), new CycleAvoidingMappingContext());
+		return bookMinimalResponseConverter.toDto(bookService.deleteBook(id));
 	}
 
-	@JsonView(Views.FullData.class)
 	@PutMapping(value = "/{bookId}")
-	public BookDto updateBook(@PathVariable Long bookId, @Valid @RequestBody BookDto bookDto)
+	public BookFullResponseDto updateBook(@PathVariable Long bookId,
+										  @Validated(Update.class) @RequestBody BookRequestDto bookRequestDto)
 	{
-		Book book = bookConverter.fromDto(bookDto, new CycleAvoidingMappingContext());
-		return bookConverter.toDto(bookService.updateBook(bookId, book), new CycleAvoidingMappingContext());
+		Book book = bookRequestDtoConverter.fromDto(bookRequestDto);
+		return bookFullResponseConverter.toDto(bookService.updateBook(bookId, book));
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/{bookId}/author")
-	public List<AuthorDto> getBookAuthors(@PathVariable Long bookId)
+	public List<AuthorMinimalResponseDto> getBookAuthors(@PathVariable Long bookId)
 	{
 		List<Author> authors = bookService.getBookAuthors(bookId);
-		return authors.stream().map(author -> authorConverter.toDto(author, new CycleAvoidingMappingContext()))
+		return authors.stream().map(author -> authorMinimalResponseConverter.toDto(author))
 					  .collect(Collectors.toList());
 	}
 

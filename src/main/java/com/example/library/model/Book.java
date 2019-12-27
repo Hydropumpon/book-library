@@ -48,6 +48,11 @@ public class Book
 	@OneToMany(targetEntity = Borrowed.class, mappedBy = "book", orphanRemoval = true)
 	private Set<Borrowed> borrowedSet = new HashSet<>();
 
+	public Book(Long id)
+	{
+		this.id = id;
+	}
+
 	public void removeAuthor(Author author)
 	{
 		authors.remove(author);

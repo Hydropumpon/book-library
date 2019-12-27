@@ -85,7 +85,7 @@ public class CustomerServiceImpl implements CustomerService
 	public List<Borrowed> getBorrows(Long customerId)
 	{
 		Customer customerDb = getCustomerById(customerId);
-		return new ArrayList<>(customerDb.getBorrowedSet());
+		return new ArrayList<>(customerDb.getBorroweds());
 	}
 
 	private Customer getCustomerById(Long customerId)
