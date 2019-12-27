@@ -41,8 +41,10 @@ public class Book
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns =
 	@JoinColumn(name = "author_id"))
+	@Builder.Default
 	private Set<Author> authors = new HashSet<>();
 
+	@Builder.Default
 	@OneToMany(targetEntity = Borrowed.class, mappedBy = "book", orphanRemoval = true)
 	private Set<Borrowed> borrowedSet = new HashSet<>();
 

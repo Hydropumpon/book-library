@@ -30,6 +30,7 @@ public class Customer
 	@Column(name = "last_name")
 	private String lastName;
 
+	@Builder.Default
 	@OneToMany(targetEntity = Borrowed.class, mappedBy = "customer", orphanRemoval = true)
 	private Set<Borrowed> borrowedSet = new HashSet<>();
 

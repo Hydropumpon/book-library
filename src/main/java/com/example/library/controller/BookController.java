@@ -52,7 +52,7 @@ public class BookController
 	}
 
 	@PostMapping
-	@JsonView(Views.IdName.class)
+	@JsonView(Views.FullData.class)
 	public BookDto addBook(@Valid @RequestBody BookDto bookDto)
 	{
 		Book book = bookConverter.fromDto(bookDto, new CycleAvoidingMappingContext());
@@ -66,7 +66,7 @@ public class BookController
 		return bookConverter.toDto(bookService.deleteBook(id), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.IdName.class)
+	@JsonView(Views.FullData.class)
 	@PutMapping(value = "/{bookId}")
 	public BookDto updateBook(@PathVariable Long bookId, @Valid @RequestBody BookDto bookDto)
 	{

@@ -31,8 +31,14 @@ public class Author implements Serializable
 	@NotNull
 	private String name;
 
+	@Builder.Default
 	@ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
 	private Set<Book> books = new HashSet<>();
+
+	public Author(String name)
+	{
+		this.name = name;
+	}
 
 	public void addBook(Book book)
 	{
