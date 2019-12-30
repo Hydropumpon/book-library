@@ -1,9 +1,5 @@
 package com.example.library.dto;
 
-import com.example.library.serializer.AuthorDtoSetSerializer;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,24 +15,18 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"authors"})
 public class BookDto
 {
-	@JsonView(Views.IdName.class)
 	private Long id;
 
 	@NotNull
 	@NotBlank
-	@JsonView(Views.IdName.class)
 	private String title;
 
 	@NotNull
 	@Min(1)
-	@JsonView(Views.FullData.class)
 	private Integer quantity;
 
-	@JsonView(Views.FullData.class)
 	private String description;
 
-	@JsonView(Views.FullData.class)
-	@JsonSerialize(using = AuthorDtoSetSerializer.class)
 	private Set<AuthorDto> authors = new HashSet<>();
 
 }

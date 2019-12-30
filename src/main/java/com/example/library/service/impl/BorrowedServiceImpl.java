@@ -46,18 +46,7 @@ public class BorrowedServiceImpl implements BorrowedService
 		Optional<Book> book = bookRepository.findById(borrowed.getBook().getId());
 		Optional<Customer> customer = customerRepository.findById(borrowed.getCustomer().getId());
 
-		if (!customer.isPresent())
-		{
-			throw new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-		}
-		if (!book.isPresent())
-		{
-			throw new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-		}
-		if (book.get().getQuantity() == NO_BOOK_AVAILABLE)
-		{
-			throw new UnavailableException(ErrorMessage.BOOK_NOT_AVAILABLE, ServiceErrorCode.UNAVAILABLE);
-		}
+		validateBorrowTake(book, customer);
 		book.get().setQuantity(book.get().getQuantity() - 1);
 		borrowed.setBook(book.get());
 		borrowed.setCustomer(customer.get());
@@ -96,11 +85,34 @@ public class BorrowedServiceImpl implements BorrowedService
 		return borrowedRepository.findAll();
 	}
 
+	@Override
+	public Borrowed getBorrowInfo(Long borrowId)
+	{
+		return borrowedRepository.findById(borrowId).orElseThrow(
+				() -> new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+	}
+
 	private void checkBorrowActive(Optional<Borrowed> borrowed)
 	{
 		if (!borrowed.isPresent() || (borrowed.get().getReturnDate() != null))
 		{
 			throw new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
+		}
+	}
+
+	private void validateBorrowTake(Optional<Book> book, Optional<Customer> customer)
+	{
+		if (!customer.isPresent())
+		{
+			throw new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
+		}
+		if (!book.isPresent())
+		{
+			throw new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
+		}
+		if (book.get().getQuantity() == NO_BOOK_AVAILABLE)
+		{
+			throw new UnavailableException(ErrorMessage.BOOK_NOT_AVAILABLE, ServiceErrorCode.UNAVAILABLE);
 		}
 	}
 }

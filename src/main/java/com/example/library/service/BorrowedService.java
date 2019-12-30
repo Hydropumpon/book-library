@@ -18,4 +18,6 @@ public interface BorrowedService
 	List<Borrowed> getExpiredBorrows();
 
 	List<Borrowed> getAllBorrows();
+
+	Borrowed getBorrowInfo(Long borrowId);
 }

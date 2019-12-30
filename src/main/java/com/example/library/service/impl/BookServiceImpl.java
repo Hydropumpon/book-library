@@ -9,7 +9,6 @@ import com.example.library.model.Book;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.repository.BookRepository;
 import com.example.library.service.BookService;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +22,14 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService
 {
 	private BookRepository bookRepository;
-	@Autowired
+
 	private AuthorRepository authorRepository;
 
 	@Autowired
-	public BookServiceImpl(BookRepository bookRepository)
+	public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository)
 	{
 		this.bookRepository = bookRepository;
+		this.authorRepository = authorRepository;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class BookServiceImpl implements BookService
 	}
 
 	@Override
-	@Transactional
+	//@Transactional
 	public Book addBook(Book book)
 	{
 		checkBookExistByTitle(book);

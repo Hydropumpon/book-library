@@ -8,8 +8,6 @@ import com.example.library.dto.BookDto;
 import com.example.library.model.Author;
 import com.example.library.model.Book;
 import com.example.library.service.BookService;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +33,6 @@ public class BookController
 		this.bookConverter = bookConverter;
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping
 	public List<BookDto> getAllBooks()
 	{
@@ -44,7 +41,6 @@ public class BookController
 						  .collect(Collectors.toList());
 	}
 
-	@JsonView(Views.FullData.class)
 	@GetMapping(value = "/{id}")
 	public BookDto getOneBook(@PathVariable Long id)
 	{
@@ -52,21 +48,18 @@ public class BookController
 	}
 
 	@PostMapping
-	@JsonView(Views.FullData.class)
 	public BookDto addBook(@Valid @RequestBody BookDto bookDto)
 	{
 		Book book = bookConverter.fromDto(bookDto, new CycleAvoidingMappingContext());
 		return bookConverter.toDto(bookService.addBook(book), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.IdName.class)
 	@DeleteMapping(value = "/{id}")
 	public BookDto deleteBook(@PathVariable Long id)
 	{
 		return bookConverter.toDto(bookService.deleteBook(id), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.FullData.class)
 	@PutMapping(value = "/{bookId}")
 	public BookDto updateBook(@PathVariable Long bookId, @Valid @RequestBody BookDto bookDto)
 	{
@@ -74,7 +67,6 @@ public class BookController
 		return bookConverter.toDto(bookService.updateBook(bookId, book), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/{bookId}/author")
 	public List<AuthorDto> getBookAuthors(@PathVariable Long bookId)
 	{

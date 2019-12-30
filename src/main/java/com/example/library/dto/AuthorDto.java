@@ -1,9 +1,6 @@
 package com.example.library.dto;
 
-import com.example.library.serializer.BookDtoSetSerializer;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,16 +15,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"books"})
+@JsonIgnoreProperties(value = "books")
 public class AuthorDto implements Serializable
 {
-	@JsonView(Views.IdName.class)
 	private Long id;
 
 	@NotNull
-	@JsonView(Views.IdName.class)
 	private String name;
 
-	@JsonView(Views.FullData.class)
-	@JsonSerialize(using = BookDtoSetSerializer.class)
 	private Set<BookDto> books = new HashSet<>();
 }

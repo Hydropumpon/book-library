@@ -1,7 +1,11 @@
 package com.example.library.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(exclude = "books")
+@JsonIgnoreProperties(value = "authors")
 public class Author implements Serializable
 {
 	@Id
@@ -33,6 +38,8 @@ public class Author implements Serializable
 
 	@Builder.Default
 	@ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
+	@Fetch(FetchMode.SUBSELECT)
+	@BatchSize(size = 10)
 	private Set<Book> books = new HashSet<>();
 
 	public Author(String name)

@@ -5,8 +5,6 @@ import com.example.library.converter.CycleAvoidingMappingContext;
 import com.example.library.dto.BorrowedDto;
 import com.example.library.model.Borrowed;
 import com.example.library.service.BorrowedService;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,21 +27,24 @@ public class BorrowedController
 	}
 
 	@PostMapping(value = "/take")
-	@JsonView(Views.FullData.class)
 	public BorrowedDto borrowBook(@RequestBody BorrowedDto borrowedDto)
 	{
 		Borrowed borrowed = borrowedConverter.fromDto(borrowedDto, new CycleAvoidingMappingContext());
 		return borrowedConverter.toDto(borrowedService.borrowBook(borrowed), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.FullData.class)
+	@GetMapping(value = "/{borrowId}")
+	public BorrowedDto getBorrowInfo(@PathVariable Long borrowId)
+	{
+		return borrowedConverter.toDto(borrowedService.getBorrowInfo(borrowId), new CycleAvoidingMappingContext());
+	}
+
 	@PostMapping(value = "/return/{borrowedId}")
 	public BorrowedDto returnBook(@PathVariable Long borrowedId)
 	{
 		return borrowedConverter.toDto(borrowedService.returnBook(borrowedId), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/active")
 	public List<BorrowedDto> getActiveBorrows()
 	{
@@ -54,7 +55,6 @@ public class BorrowedController
 
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/expired")
 	public List<BorrowedDto> getExpiredBorrows()
 	{
@@ -65,7 +65,6 @@ public class BorrowedController
 
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping
 	public List<BorrowedDto> getAllBorrows()
 	{

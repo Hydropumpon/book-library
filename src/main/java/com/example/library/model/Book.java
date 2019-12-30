@@ -2,6 +2,9 @@ package com.example.library.model;
 
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -41,7 +44,9 @@ public class Book
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns =
 	@JoinColumn(name = "author_id"))
+	@Fetch(FetchMode.SUBSELECT)
 	@Builder.Default
+	@BatchSize(size = 10)
 	private Set<Author> authors = new HashSet<>();
 
 	@Builder.Default

@@ -8,8 +8,6 @@ import com.example.library.dto.AuthorDto;
 import com.example.library.dto.BookDto;
 import com.example.library.model.Book;
 import com.example.library.service.AuthorService;
-import com.example.library.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +36,6 @@ public class AuthorController
 	}
 
 	@GetMapping
-	@JsonView(Views.IdName.class)
 	public List<AuthorDto> getAllAuthors()
 	{
 		return authorService.getAllAuthors().stream()
@@ -46,7 +43,6 @@ public class AuthorController
 							.collect(Collectors.toList());
 	}
 
-	@JsonView(Views.FullData.class)
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id)
 	{
@@ -56,7 +52,6 @@ public class AuthorController
 	}
 
 	@PostMapping
-	@JsonView(Views.IdName.class)
 	public ResponseEntity<AuthorDto> addAuthor(@Valid @RequestBody AuthorDto authorDto)
 	{
 		return new ResponseEntity<>(authorConverter.toDto(authorService.addAuthor(
@@ -64,7 +59,6 @@ public class AuthorController
 														  new CycleAvoidingMappingContext()), HttpStatus.OK);
 	}
 
-	@JsonView(Views.IdName.class)
 	@DeleteMapping(value = "/{authorId}")
 	public ResponseEntity<AuthorDto> deleteAuthor(@PathVariable Long authorId)
 	{
@@ -73,7 +67,6 @@ public class AuthorController
 				HttpStatus.OK);
 	}
 
-	@JsonView(Views.FullData.class)
 	@PutMapping(value = "/{authorId}")
 	public AuthorDto updateAuthor(@PathVariable Long authorId, @Valid @RequestBody AuthorDto authorDto)
 	{
@@ -81,7 +74,6 @@ public class AuthorController
 				.fromDto(authorDto, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
 	}
 
-	@JsonView(Views.IdName.class)
 	@GetMapping(value = "/{authorId}/book")
 	public List<BookDto> getAuthorBooks(@PathVariable Long authorId)
 	{
