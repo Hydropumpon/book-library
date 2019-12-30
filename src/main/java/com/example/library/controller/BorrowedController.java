@@ -46,6 +46,13 @@ public class BorrowedController
 		return borrowedFullResponseDtoConverter.toDto(borrowedService.borrowBook(borrowed));
 	}
 
+
+	@GetMapping(value = "/{borrowId}")
+	public BorrowedFullResponseDto getBorrowInfo(@PathVariable Long borrowId)
+	{
+		return borrowedFullResponseDtoConverter.toDto(borrowedService.getBorrowInfo(borrowId));
+	}
+
 	@PostMapping(value = "/return/{borrowedId}")
 	public BorrowedFullResponseDto returnBook(@PathVariable Long borrowedId)
 	{
