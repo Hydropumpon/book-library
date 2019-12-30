@@ -8,7 +8,7 @@ import com.example.library.dto.response.BorrowedFullResponseDto;
 import com.example.library.dto.response.BorrowedMinimalResponseDto;
 import com.example.library.model.Borrowed;
 import com.example.library.service.BorrowedService;
-import com.example.library.views.transfer.New;
+import com.example.library.validation.New;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

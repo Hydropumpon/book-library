@@ -1,7 +1,7 @@
 package com.example.library.dto.request;
 
-import com.example.library.views.transfer.New;
-import com.example.library.views.transfer.Update;
+import com.example.library.validation.New;
+import com.example.library.validation.Update;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
