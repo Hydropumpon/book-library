@@ -85,7 +85,9 @@ public class AuthorController {
 
     @GetMapping(value = "/pageable")
     public List<AuthorMinimalResponseDto> getPages(Pageable pageable) {
-        return authorService.getAuthorPages(pageable).get()
+        return authorService.getAuthorPages(pageable)
+                            .getContent()
+                            .stream()
                             .map(author -> authorMinimalResponseDtoConverter.toDto(author))
                             .collect(Collectors.toList());
     }
