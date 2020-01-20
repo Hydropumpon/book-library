@@ -2,10 +2,9 @@ package com.example.library.dto.request;
 
 import com.example.library.validation.New;
 import com.example.library.validation.Update;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -13,24 +12,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.List;
 
+
 @Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@Builder
 public class BookRequestDto {
     @Null(groups = {New.class})
     @NotNull(groups = {Update.class})
-    private Long id;
+    private final Long id;
 
     @NotNull(groups = {Update.class, New.class})
     @NotBlank(groups = {Update.class, New.class})
-    private String title;
+    private final String title;
 
-    private String description;
+    private final String description;
 
     @NotNull(groups = {Update.class, New.class})
     @Min(value = 1, groups = {Update.class, New.class})
-    private Integer quantity;
+    private final Integer quantity;
 
-    private List<Long> authors;
+    private final List<Long> authors;
 }

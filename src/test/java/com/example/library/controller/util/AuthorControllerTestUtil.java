@@ -4,10 +4,8 @@ import com.example.library.dto.request.AuthorRequestDto;
 import com.example.library.dto.response.AuthorFullResponseDto;
 import com.example.library.dto.response.AuthorMinimalResponseDto;
 import com.example.library.model.Author;
-import com.example.library.model.Book;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class AuthorControllerTestUtil {
     private static final String ADD_NAME = "Test";
@@ -34,24 +32,26 @@ public class AuthorControllerTestUtil {
 
     public static final Author authorDbUpdate;
 
-    //public static final AuthorFullResponseDto authorFullResponseDtoUpdate;
-
     static {
-        authorRequestDtoAdd = new AuthorRequestDto();
-        authorRequestDtoAdd.setName(ADD_NAME);
+        authorRequestDtoAdd = AuthorRequestDto.builder()
+                                              .name(ADD_NAME)
+                                              .build();
 
-        authorMinimalResponseDto = new AuthorMinimalResponseDto();
-        authorMinimalResponseDto.setName(authorRequestDtoAdd.getName());
-        authorMinimalResponseDto.setId(AUTHOR_ID);
+        authorMinimalResponseDto = AuthorMinimalResponseDto.builder()
+                                                           .name(authorRequestDtoAdd.getName())
+                                                           .id(AUTHOR_ID)
+                                                           .build();
 
-        authorFullResponseDto = new AuthorFullResponseDto();
-        authorFullResponseDto.setName(authorRequestDtoAdd.getName());
-        authorFullResponseDto.setId(AUTHOR_ID);
-        authorFullResponseDto.setBooks(new ArrayList<>());
+        authorFullResponseDto = AuthorFullResponseDto.builder()
+                                                     .name(authorRequestDtoAdd.getName())
+                                                     .id(AUTHOR_ID)
+                                                     .books(new ArrayList<>())
+                                                     .build();
 
-        authorRequestDtoUpdate = new AuthorRequestDto();
-        authorRequestDtoUpdate.setName(UPDATE_NAME);
-        authorRequestDtoUpdate.setId(AUTHOR_ID);
+        authorRequestDtoUpdate = AuthorRequestDto.builder()
+                                                 .id(AUTHOR_ID)
+                                                 .name(UPDATE_NAME)
+                                                 .build();
 
         authorPreAdd = new Author();
         authorPreAdd.setName(authorRequestDtoAdd.getName());
@@ -60,9 +60,10 @@ public class AuthorControllerTestUtil {
         authorDbAdd.setName(authorRequestDtoAdd.getName());
         authorDbAdd.setId(AUTHOR_ID);
 
-        authorMinimalResponseDtoUpdate = new AuthorMinimalResponseDto();
-        authorMinimalResponseDtoUpdate.setName(authorRequestDtoUpdate.getName());
-        authorMinimalResponseDtoUpdate.setId(authorRequestDtoUpdate.getId());
+        authorMinimalResponseDtoUpdate = AuthorMinimalResponseDto.builder()
+                                                                 .name(authorRequestDtoUpdate.getName())
+                                                                 .id(authorRequestDtoUpdate.getId())
+                                                                 .build();
 
         authorDbUpdate = new Author();
         authorDbUpdate.setName(authorRequestDtoUpdate.getName());
@@ -72,8 +73,10 @@ public class AuthorControllerTestUtil {
         authorPreUpdate.setName(authorRequestDtoUpdate.getName());
         authorPreUpdate.setId(authorRequestDtoUpdate.getId());
 
-        authorResponseDtoUpdate = new AuthorMinimalResponseDto();
-        authorResponseDtoUpdate.setName(authorDbUpdate.getName());
-        authorResponseDtoUpdate.setId(authorDbUpdate.getId());
+
+        authorResponseDtoUpdate = AuthorMinimalResponseDto.builder()
+                                                          .name(authorDbUpdate.getName())
+                                                          .id(authorDbUpdate.getId())
+                                                          .build();
     }
 }

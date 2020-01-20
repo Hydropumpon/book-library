@@ -1,22 +1,23 @@
 package com.example.library.dto.response;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@Builder
 public class BorrowedMinimalResponseDto {
-    private Long id;
+    private final Long id;
 
-    private String customer;
+    private final String customer;
 
-    private String book;
+    private final String book;
 
-    private String returnDate;
+    private final String returnDate;
 
 }

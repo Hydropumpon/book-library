@@ -1,6 +1,8 @@
 package com.example.library.dto.response;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,19 +11,18 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
-@EqualsAndHashCode(exclude = "borrows")
-@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CustomerFullResponseDto {
-    private Long id;
+    private final Long id;
 
-    private String firstName;
+    private final String firstName;
 
-    private String lastName;
+    private final String lastName;
 
-    private String login;
+    private final String login;
 
-    private String email;
+    private final String email;
 
-    private List<BorrowedMinimalResponseDto> borrows;
+    private final List<BorrowedMinimalResponseDto> borrows;
 }

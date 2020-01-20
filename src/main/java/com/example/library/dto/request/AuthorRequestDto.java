@@ -2,6 +2,8 @@ package com.example.library.dto.request;
 
 import com.example.library.validation.New;
 import com.example.library.validation.Update;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,16 +15,15 @@ import javax.validation.constraints.Null;
 import java.io.Serializable;
 
 
-@EqualsAndHashCode
 @Getter
-@Setter
-@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AuthorRequestDto implements Serializable {
     @Null(groups = {New.class})
     @NotNull(groups = {Update.class})
-    private Long id;
+    private final Long id;
 
     @NotNull(groups = {New.class, Update.class})
     @NotBlank(groups = {New.class, Update.class})
-    private String name;
+    private final String name;
 }

@@ -8,14 +8,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
-@EqualsAndHashCode
 @AllArgsConstructor
-@Setter
+@Builder
 public class CustomerMinimalResponseDto {
-    private Long id;
+    private final Long id;
 
-    private String login;
+    private final String login;
 
-    private String email;
+    private final String email;
 }

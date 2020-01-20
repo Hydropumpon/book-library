@@ -5,12 +5,11 @@ import com.example.library.dto.request.BorrowedRequestDto;
 import com.example.library.model.Book;
 import com.example.library.model.Borrowed;
 import com.example.library.model.Customer;
-import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "spring")
 public abstract class BorrowedRequestDtoConverter {
     @Autowired
     LibraryProperties libraryProperties;

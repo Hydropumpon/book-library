@@ -1,20 +1,18 @@
 package com.example.library.dto.response;
 
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode(exclude = "books")
+@AllArgsConstructor
+@Builder
 public class AuthorFullResponseDto {
-    private Long id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
-    private List<BookMinimalResponseDto> books;
+    private final List<BookMinimalResponseDto> books;
 }

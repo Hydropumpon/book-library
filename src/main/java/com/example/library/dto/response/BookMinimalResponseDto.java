@@ -1,18 +1,19 @@
 package com.example.library.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@Builder
 public class BookMinimalResponseDto {
-    private Long id;
+    private final Long id;
 
-    private String title;
+    private final String title;
 
-    private String description;
+    private final String description;
 }

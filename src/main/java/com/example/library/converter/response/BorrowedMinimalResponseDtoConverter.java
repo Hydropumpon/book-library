@@ -4,10 +4,9 @@ import com.example.library.dto.response.BorrowedMinimalResponseDto;
 import com.example.library.model.Book;
 import com.example.library.model.Borrowed;
 import com.example.library.model.Customer;
-import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD)
+@Mapper(componentModel = "spring")
 public interface BorrowedMinimalResponseDtoConverter {
     BorrowedMinimalResponseDto toDto(Borrowed borrowed);
 

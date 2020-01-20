@@ -2,6 +2,8 @@ package com.example.library.dto.request;
 
 import com.example.library.validation.New;
 import com.example.library.validation.Update;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +13,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 @Getter
-@Setter
-@EqualsAndHashCode
-@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class BorrowedRequestDto {
     @NotNull(groups = {Update.class})
     @Null(groups = {New.class})
-    private Long id;
+    private final Long id;
 
     @NotNull(groups = {New.class})
-    private Long customer;
+    private final Long customer;
 
     @NotNull(groups = {New.class})
-    private Long book;
+    private final Long book;
 
 }
