@@ -10,8 +10,8 @@ import com.example.library.repository.CustomerRepository;
 import com.example.library.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,11 +26,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Customer> getCustomers() {
         return customerRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Customer getCustomer(Long id) {
         return getCustomerById(id);
     }
@@ -72,6 +74,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Borrowed> getBorrows(Long customerId) {
         Customer customerDb = getCustomerById(customerId);
         return new ArrayList<>(customerDb.getBorrows());

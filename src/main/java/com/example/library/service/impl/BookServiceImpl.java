@@ -11,8 +11,8 @@ import com.example.library.repository.BookRepository;
 import com.example.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,11 +31,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Book getOneBook(Long bookId) {
         return bookRepository.findById(bookId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
@@ -61,6 +63,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Author> getBookAuthors(Long bookId) {
         Book bookDb = getBookById(bookId);
         return new ArrayList<>(bookDb.getAuthors());

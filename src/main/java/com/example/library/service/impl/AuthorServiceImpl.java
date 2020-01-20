@@ -12,8 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,11 +29,13 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Author> getAllAuthors() {
         return authorRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Author getOneAuthor(Long authorId) {
         return getAuthorById(authorId);
     }
@@ -62,12 +65,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getAuthorBooks(Long authorId) {
         Author author = getAuthorById(authorId);
         return new ArrayList<>(author.getBooks());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Author> getAuthorPages(Pageable pageable) {
         return authorRepository.findAll(pageable);
     }

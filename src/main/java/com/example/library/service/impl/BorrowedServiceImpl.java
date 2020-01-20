@@ -13,8 +13,8 @@ import com.example.library.repository.CustomerRepository;
 import com.example.library.service.BorrowedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -63,24 +63,29 @@ public class BorrowedServiceImpl implements BorrowedService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Borrowed> getActiveBorrows() {
         return borrowedRepository.getAllByReturnDateIsNull();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Borrowed> getExpiredBorrows() {
         return borrowedRepository.getAllByReturnDateIsNullAndReturnTillDateLessThan(LocalDate.now());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Borrowed> getAllBorrows() {
         return borrowedRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Borrowed getBorrowInfo(Long borrowId) {
-        return borrowedRepository.findById(borrowId).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+        return borrowedRepository.findById(borrowId)
+                                 .orElseThrow(() -> new NotFoundException(ErrorMessage.BORROW_NOT_FOUND,
+                                                                          ServiceErrorCode.NOT_FOUND));
     }
 
     private void checkBorrowActive(Optional<Borrowed> borrowed) {
