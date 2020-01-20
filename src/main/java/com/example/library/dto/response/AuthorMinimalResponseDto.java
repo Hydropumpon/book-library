@@ -9,10 +9,8 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-public class AuthorMinimalResponseDto
-{
-	private Long id;
+public class AuthorMinimalResponseDto {
+    private Long id;
 
-	private String name;
-
+    private String name;
 }

@@ -1,5 +1,4 @@
 package com.example.library.validation;
 
-public interface New
-{
+public interface New {
 }

@@ -14,16 +14,15 @@ import java.io.Serializable;
 
 
 @EqualsAndHashCode
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
-public class AuthorRequestDto implements Serializable
-{
-	@Null(groups = {New.class})
-	@NotNull(groups = {Update.class})
-	private Long id;
+public class AuthorRequestDto implements Serializable {
+    @Null(groups = {New.class})
+    @NotNull(groups = {Update.class})
+    private Long id;
 
-	@NotNull(groups = {New.class, Update.class})
-	@NotBlank(groups = {New.class, Update.class})
-	private String name;
+    @NotNull(groups = {New.class, Update.class})
+    @NotBlank(groups = {New.class, Update.class})
+    private String name;
 }

@@ -6,9 +6,8 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD)
-public interface AuthorRequestDtoConverter
-{
-	@Mapping(target = "books", ignore = true)
-	Author fromDto(AuthorRequestDto authorRequestDto);
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface AuthorRequestDtoConverter {
+    @Mapping(target = "books", ignore = true)
+    Author fromDto(AuthorRequestDto authorRequestDto);
 }

@@ -15,25 +15,24 @@ import javax.validation.constraints.Null;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class CustomerRequestDto
-{
-	@Null(groups = {New.class})
-	@NotNull(groups = {Update.class})
-	private Long id;
+public class CustomerRequestDto {
+    @Null(groups = {New.class})
+    @NotNull(groups = {Update.class})
+    private Long id;
 
-	@NotNull(groups = {Update.class, New.class})
-	@NotBlank(groups = {Update.class, New.class})
-	private String login;
+    @NotNull(groups = {Update.class, New.class})
+    @NotBlank(groups = {Update.class, New.class})
+    private String login;
 
-	@NotNull(groups = {Update.class, New.class})
-	@NotBlank(groups = {Update.class, New.class})
-	private String firstName;
+    @NotNull(groups = {Update.class, New.class})
+    @NotBlank(groups = {Update.class, New.class})
+    private String firstName;
 
-	@NotNull(groups = {Update.class, New.class})
-	@NotBlank(groups = {Update.class, New.class})
-	private String lastName;
+    @NotNull(groups = {Update.class, New.class})
+    @NotBlank(groups = {Update.class, New.class})
+    private String lastName;
 
-	@NotNull(groups = {Update.class, New.class})
-	@NotBlank(groups = {Update.class, New.class})
-	private String email;
+    @NotNull(groups = {Update.class, New.class})
+    @NotBlank(groups = {Update.class, New.class})
+    private String email;
 }

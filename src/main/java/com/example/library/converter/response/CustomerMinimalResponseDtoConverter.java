@@ -6,7 +6,6 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD)
-public interface CustomerMinimalResponseDtoConverter
-{
-	CustomerMinimalResponseDto toDto(Customer customer);
+public interface CustomerMinimalResponseDtoConverter {
+    CustomerMinimalResponseDto toDto(Customer customer);
 }

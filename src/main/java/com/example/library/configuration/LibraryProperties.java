@@ -7,30 +7,25 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("library.borrow")
 @EnableConfigurationProperties
-public class LibraryProperties
-{
-	private Integer days = 30;
+public class LibraryProperties {
+    private Integer days = 30;
 
-	private String remainder = "0 0 12 * * ?";
+    private String remainder = "0 0 12 * * ?";
 
-	public String getRemainder()
-	{
-		return remainder;
-	}
+    public String getRemainder() {
+        return remainder;
+    }
 
-	public void setRemainder(String remainder)
-	{
-		this.remainder = remainder;
-	}
+    public void setRemainder(String remainder) {
+        this.remainder = remainder;
+    }
 
-	public Integer getDays()
-	{
-		return days;
-	}
+    public Integer getDays() {
+        return days;
+    }
 
-	public void setDays(Integer days)
-	{
-		this.days = days;
-	}
+    public void setDays(Integer days) {
+        this.days = days;
+    }
 
 }

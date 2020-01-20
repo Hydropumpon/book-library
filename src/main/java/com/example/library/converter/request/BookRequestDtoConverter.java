@@ -11,14 +11,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD)
-public interface BookRequestDtoConverter
-{
-	@Mapping(target = "borrowedSet", ignore = true)
-	Book fromDto(BookRequestDto bookRequestDto);
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface BookRequestDtoConverter {
+    @Mapping(target = "borrowedSet", ignore = true)
+    Book fromDto(BookRequestDto bookRequestDto);
 
-	default Set<Author> mapAuthor(List<Long> authorsId)
-	{
-		return authorsId.stream().map(Author::new).collect(Collectors.toSet());
-	}
+    default Set<Author> mapAuthor(List<Long> authorsId) {
+        return authorsId.stream().map(Author::new).collect(Collectors.toSet());
+    }
 }

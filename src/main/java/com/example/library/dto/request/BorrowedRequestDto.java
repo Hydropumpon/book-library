@@ -14,16 +14,15 @@ import javax.validation.constraints.Null;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-public class BorrowedRequestDto
-{
-	@NotNull(groups = {Update.class})
-	@Null(groups = {New.class})
-	private Long id;
+public class BorrowedRequestDto {
+    @NotNull(groups = {Update.class})
+    @Null(groups = {New.class})
+    private Long id;
 
-	@NotNull(groups = {New.class})
-	private Long customer;
+    @NotNull(groups = {New.class})
+    private Long customer;
 
-	@NotNull(groups = {New.class})
-	private Long book;
+    @NotNull(groups = {New.class})
+    private Long book;
 
 }

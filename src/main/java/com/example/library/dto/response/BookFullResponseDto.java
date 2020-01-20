@@ -11,15 +11,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "authors")
-public class BookFullResponseDto
-{
-	private Long id;
+public class BookFullResponseDto {
+    private Long id;
 
-	private String title;
+    private String title;
 
-	private String description;
+    private String description;
 
-	private Integer quantity;
+    private Integer quantity;
 
-	private List<AuthorMinimalResponseDto> authors;
+    private List<AuthorMinimalResponseDto> authors;
 }

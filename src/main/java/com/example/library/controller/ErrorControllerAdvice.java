@@ -10,13 +10,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class ErrorControllerAdvice extends ResponseEntityExceptionHandler
-{
-	@ExceptionHandler(ServiceException.class)
-	public ResponseEntity<ErrorResponse> handleNotFound(ServiceException exception)
-	{
-		ErrorResponse errorResponse= new ErrorResponse(LocalDateTime.now(), exception.getErrorCode().getErrorCode(), exception.getMessage());
-		return new ResponseEntity<>(errorResponse, exception.getStatus());
-	}
+public class ErrorControllerAdvice extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(ServiceException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ServiceException exception) {
+        ErrorResponse errorResponse =
+                new ErrorResponse(LocalDateTime.now(), exception.getErrorCode().getErrorCode(), exception.getMessage());
+        return new ResponseEntity<>(errorResponse, exception.getStatus());
+    }
 
 }

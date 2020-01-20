@@ -9,17 +9,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class BorrowedFullResponseDto
-{
-	private Long id;
+public class BorrowedFullResponseDto {
+    private Long id;
 
-	private CustomerMinimalResponseDto customer;
+    private CustomerMinimalResponseDto customer;
 
-	private BookMinimalResponseDto book;
+    private BookMinimalResponseDto book;
 
-	private String returnDate;
+    private String returnDate;
 
-	private String borrowDate;
+    private String borrowDate;
 
-	private String returnTillDate;
+    private String returnTillDate;
 }

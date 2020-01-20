@@ -10,14 +10,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class BorrowedMinimalResponseDto
-{
-	private Long id;
+public class BorrowedMinimalResponseDto {
+    private Long id;
 
-	private String customer;
+    private String customer;
 
-	private String book;
+    private String book;
 
-	private String returnDate;
+    private String returnDate;
 
 }

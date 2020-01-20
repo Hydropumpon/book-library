@@ -10,25 +10,22 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD)
-public abstract class BorrowedRequestDtoConverter
-{
-	@Autowired
-	LibraryProperties libraryProperties;
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public abstract class BorrowedRequestDtoConverter {
+    @Autowired
+    LibraryProperties libraryProperties;
 
-	@Mapping(target = "returnTillDate", expression = "java(java.time.LocalDate.now().plusDays(libraryProperties" +
-			".getDays" + "()))")
-	@Mapping(target = "returnDate", ignore = true)
-	@Mapping(target = "borrowDate", expression = "java(java.time.LocalDate.now())")
-	public abstract Borrowed fromDto(BorrowedRequestDto borrowedRequestDto);
+    @Mapping(target = "returnTillDate", expression = "java(java.time.LocalDate.now().plusDays(libraryProperties" +
+            ".getDays" + "()))")
+    @Mapping(target = "returnDate", ignore = true)
+    @Mapping(target = "borrowDate", expression = "java(java.time.LocalDate.now())")
+    public abstract Borrowed fromDto(BorrowedRequestDto borrowedRequestDto);
 
-	Book mapBook(Long id)
-	{
-		return new Book(id);
-	}
+    Book mapBook(Long id) {
+        return new Book(id);
+    }
 
-	Customer mapCustomer(Long id)
-	{
-		return new Customer(id);
-	}
+    Customer mapCustomer(Long id) {
+        return new Customer(id);
+    }
 }

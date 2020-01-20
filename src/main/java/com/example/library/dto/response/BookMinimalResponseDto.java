@@ -9,11 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class BookMinimalResponseDto
-{
-	private Long id;
+public class BookMinimalResponseDto {
+    private Long id;
 
-	private String title;
+    private String title;
 
-	private String description;
+    private String description;
 }

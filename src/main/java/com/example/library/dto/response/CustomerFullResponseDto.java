@@ -1,7 +1,6 @@
 package com.example.library.dto.response;
 
 
-import com.example.library.model.Borrowed;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,17 +12,16 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode(exclude = "borrows")
 @NoArgsConstructor
-public class CustomerFullResponseDto
-{
-	private Long id;
+public class CustomerFullResponseDto {
+    private Long id;
 
-	private String firstName;
+    private String firstName;
 
-	private String lastName;
+    private String lastName;
 
-	private String login;
+    private String login;
 
-	private String email;
+    private String email;
 
-	private List<BorrowedMinimalResponseDto> borrows;
+    private List<BorrowedMinimalResponseDto> borrows;
 }

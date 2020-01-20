@@ -17,21 +17,20 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class BookRequestDto
-{
-	@Null(groups = {New.class})
-	@NotNull(groups = {Update.class})
-	private Long id;
+public class BookRequestDto {
+    @Null(groups = {New.class})
+    @NotNull(groups = {Update.class})
+    private Long id;
 
-	@NotNull(groups = {Update.class, New.class})
-	@NotBlank(groups = {Update.class, New.class})
-	private String title;
+    @NotNull(groups = {Update.class, New.class})
+    @NotBlank(groups = {Update.class, New.class})
+    private String title;
 
-	private String description;
+    private String description;
 
-	@NotNull(groups = {Update.class, New.class})
-	@Min(value = 1, groups = {Update.class, New.class})
-	private Integer quantity;
+    @NotNull(groups = {Update.class, New.class})
+    @Min(value = 1, groups = {Update.class, New.class})
+    private Integer quantity;
 
-	private List<Long> authors;
+    private List<Long> authors;
 }

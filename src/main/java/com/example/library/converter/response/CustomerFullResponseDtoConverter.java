@@ -6,8 +6,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD, uses =
-		{BorrowedMinimalResponseDtoConverter.class})
-public interface CustomerFullResponseDtoConverter
-{
-	CustomerFullResponseDto toDto(Customer customer);
+        {BorrowedMinimalResponseDtoConverter.class})
+public interface CustomerFullResponseDtoConverter {
+    CustomerFullResponseDto toDto(Customer customer);
 }

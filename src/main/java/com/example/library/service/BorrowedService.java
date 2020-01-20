@@ -5,19 +5,18 @@ import com.example.library.model.Borrowed;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface BorrowedService
-{
-	@Transactional
-	Borrowed borrowBook(Borrowed borrowed);
+public interface BorrowedService {
+    @Transactional
+    Borrowed borrowBook(Borrowed borrowed);
 
-	@Transactional
-	Borrowed returnBook(Long borrowedId);
+    @Transactional
+    Borrowed returnBook(Long borrowedId);
 
-	List<Borrowed> getActiveBorrows();
+    List<Borrowed> getActiveBorrows();
 
-	List<Borrowed> getExpiredBorrows();
+    List<Borrowed> getExpiredBorrows();
 
-	List<Borrowed> getAllBorrows();
+    List<Borrowed> getAllBorrows();
 
-	Borrowed getBorrowInfo(Long borrowId);
+    Borrowed getBorrowInfo(Long borrowId);
 }

@@ -6,8 +6,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.FIELD, uses =
-		{AuthorMinimalResponseDtoConverter.class})
-public interface BookFullResponseDtoConverter
-{
-	BookFullResponseDto toDto(Book book);
+        {AuthorMinimalResponseDtoConverter.class})
+public interface BookFullResponseDtoConverter {
+    BookFullResponseDto toDto(Book book);
 }

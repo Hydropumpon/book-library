@@ -20,98 +20,84 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class BorrowedServiceImpl implements BorrowedService
-{
-	private static int NO_BOOK_AVAILABLE = 0;
+public class BorrowedServiceImpl implements BorrowedService {
+    private static int NO_BOOK_AVAILABLE = 0;
 
-	private BorrowedRepository borrowedRepository;
+    private BorrowedRepository borrowedRepository;
 
-	private BookRepository bookRepository;
+    private BookRepository bookRepository;
 
-	private CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
 
-	@Autowired
-	public BorrowedServiceImpl(BorrowedRepository borrowedRepository, BookRepository bookRepository,
-							   CustomerRepository customerRepository)
-	{
-		this.borrowedRepository = borrowedRepository;
-		this.bookRepository = bookRepository;
-		this.customerRepository = customerRepository;
-	}
+    @Autowired
+    public BorrowedServiceImpl(BorrowedRepository borrowedRepository, BookRepository bookRepository,
+                               CustomerRepository customerRepository) {
+        this.borrowedRepository = borrowedRepository;
+        this.bookRepository = bookRepository;
+        this.customerRepository = customerRepository;
+    }
 
-	@Override
-	@Transactional
-	public Borrowed borrowBook(Borrowed borrowed)
-	{
-		Optional<Book> book = bookRepository.findById(borrowed.getBook().getId());
-		Optional<Customer> customer = customerRepository.findById(borrowed.getCustomer().getId());
-		validateBorrowTake(book, customer);
-		book.get().setQuantity(book.get().getQuantity() - 1);
-		borrowed.setBook(book.get());
-		borrowed.setCustomer(customer.get());
-		bookRepository.save(book.get());
-		return borrowedRepository.save(borrowed);
-	}
+    @Override
+    @Transactional
+    public Borrowed borrowBook(Borrowed borrowed) {
+        Optional<Book> book = bookRepository.findById(borrowed.getBook().getId());
+        Optional<Customer> customer = customerRepository.findById(borrowed.getCustomer().getId());
+        validateBorrowTake(book, customer);
+        book.get().setQuantity(book.get().getQuantity() - 1);
+        borrowed.setBook(book.get());
+        borrowed.setCustomer(customer.get());
+        bookRepository.save(book.get());
+        return borrowedRepository.save(borrowed);
+    }
 
-	@Override
-	@Transactional
-	public Borrowed returnBook(Long borrowedId)
-	{
-		Optional<Borrowed> borrowed = borrowedRepository.findById(borrowedId);
-		checkBorrowActive(borrowed);
-		Optional<Book> book = bookRepository.findById(borrowed.get().getBook().getId());
-		book.get().setQuantity(book.get().getQuantity() + 1);
-		bookRepository.save(book.get());
-		borrowed.get().setReturnDate(LocalDate.now());
-		return borrowedRepository.save(borrowed.get());
-	}
+    @Override
+    @Transactional
+    public Borrowed returnBook(Long borrowedId) {
+        Optional<Borrowed> borrowed = borrowedRepository.findById(borrowedId);
+        checkBorrowActive(borrowed);
+        Optional<Book> book = bookRepository.findById(borrowed.get().getBook().getId());
+        book.get().setQuantity(book.get().getQuantity() + 1);
+        bookRepository.save(book.get());
+        borrowed.get().setReturnDate(LocalDate.now());
+        return borrowedRepository.save(borrowed.get());
+    }
 
-	@Override
-	public List<Borrowed> getActiveBorrows()
-	{
-		return borrowedRepository.getAllByReturnDateIsNull();
-	}
+    @Override
+    public List<Borrowed> getActiveBorrows() {
+        return borrowedRepository.getAllByReturnDateIsNull();
+    }
 
-	@Override
-	public List<Borrowed> getExpiredBorrows()
-	{
-		return borrowedRepository.getAllByReturnDateIsNullAndReturnTillDateLessThan(LocalDate.now());
-	}
+    @Override
+    public List<Borrowed> getExpiredBorrows() {
+        return borrowedRepository.getAllByReturnDateIsNullAndReturnTillDateLessThan(LocalDate.now());
+    }
 
-	@Override
-	public List<Borrowed> getAllBorrows()
-	{
-		return borrowedRepository.findAll();
-	}
+    @Override
+    public List<Borrowed> getAllBorrows() {
+        return borrowedRepository.findAll();
+    }
 
-	@Override
-	public Borrowed getBorrowInfo(Long borrowId)
-	{
-		return borrowedRepository.findById(borrowId).orElseThrow(
-				() -> new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
-	}
+    @Override
+    public Borrowed getBorrowInfo(Long borrowId) {
+        return borrowedRepository.findById(borrowId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+    }
 
-	private void checkBorrowActive(Optional<Borrowed> borrowed)
-	{
-		if (!borrowed.isPresent() || (borrowed.get().getReturnDate() != null))
-		{
-			throw new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-		}
-	}
+    private void checkBorrowActive(Optional<Borrowed> borrowed) {
+        if (!borrowed.isPresent() || (borrowed.get().getReturnDate() != null)) {
+            throw new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
+        }
+    }
 
-	private void validateBorrowTake(Optional<Book> book, Optional<Customer> customer)
-	{
-		if (!customer.isPresent())
-		{
-			throw new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-		}
-		if (!book.isPresent())
-		{
-			throw new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-		}
-		if (book.get().getQuantity() == NO_BOOK_AVAILABLE)
-		{
-			throw new UnavailableException(ErrorMessage.BOOK_NOT_AVAILABLE, ServiceErrorCode.UNAVAILABLE);
-		}
-	}
+    private void validateBorrowTake(Optional<Book> book, Optional<Customer> customer) {
+        if (!customer.isPresent()) {
+            throw new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
+        }
+        if (!book.isPresent()) {
+            throw new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
+        }
+        if (book.get().getQuantity() == NO_BOOK_AVAILABLE) {
+            throw new UnavailableException(ErrorMessage.BOOK_NOT_AVAILABLE, ServiceErrorCode.UNAVAILABLE);
+        }
+    }
 }
