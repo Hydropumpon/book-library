@@ -14,8 +14,7 @@ import com.example.library.service.AuthorService;
 import com.example.library.validation.New;
 import com.example.library.validation.Update;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,22 +60,20 @@ public class AuthorController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AuthorFullResponseDto> getAuthor(@PathVariable Long id) {
-        return new ResponseEntity<>(authorFullResponseDtoConverter.toDto(authorService.getOneAuthor(id)),
-                                    HttpStatus.OK);
+    public AuthorFullResponseDto getAuthor(@PathVariable Long id) {
+        return authorFullResponseDtoConverter.toDto(authorService.getOneAuthor(id));
     }
 
     @PostMapping
-    public ResponseEntity<AuthorMinimalResponseDto> addAuthor(
+    public AuthorMinimalResponseDto addAuthor(
             @Validated(New.class) @RequestBody AuthorRequestDto authorDto) {
-        return new ResponseEntity<>(authorMinimalResponseDtoConverter.toDto(authorService.addAuthor(
-                authorRequestDtoConverter.fromDto(authorDto))), HttpStatus.OK);
+        return authorMinimalResponseDtoConverter
+                .toDto(authorService.addAuthor(authorRequestDtoConverter.fromDto(authorDto)));
     }
 
     @DeleteMapping(value = "/{authorId}")
-    public ResponseEntity<AuthorMinimalResponseDto> deleteAuthor(@PathVariable Long authorId) {
-        return new ResponseEntity<>(authorMinimalResponseDtoConverter.toDto(authorService.deleteAuthor(authorId)),
-                                    HttpStatus.OK);
+    public AuthorMinimalResponseDto deleteAuthor(@PathVariable Long authorId) {
+        return authorMinimalResponseDtoConverter.toDto(authorService.deleteAuthor(authorId));
     }
 
     @PutMapping(value = "/{authorId}")
@@ -85,6 +82,14 @@ public class AuthorController {
         return authorMinimalResponseDtoConverter
                 .toDto(authorService.updateAuthor(authorId, authorRequestDtoConverter.fromDto(authorDto)));
     }
+
+    @GetMapping(value = "/pageable")
+    public List<AuthorMinimalResponseDto> getPages(Pageable pageable) {
+        return authorService.getAuthorPages(pageable).get()
+                            .map(author -> authorMinimalResponseDtoConverter.toDto(author))
+                            .collect(Collectors.toList());
+    }
+
 
     @GetMapping(value = "/{authorId}/book")
     public List<BookMinimalResponseDto> getAuthorBooks(@PathVariable Long authorId) {

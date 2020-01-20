@@ -9,6 +9,8 @@ import com.example.library.model.Book;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -63,6 +65,11 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Book> getAuthorBooks(Long authorId) {
         Author author = getAuthorById(authorId);
         return new ArrayList<>(author.getBooks());
+    }
+
+    @Override
+    public Page<Author> getAuthorPages(Pageable pageable) {
+        return authorRepository.findAll(pageable);
     }
 
     private void checkNameDuplicate(Author author, Author authorDb) {
