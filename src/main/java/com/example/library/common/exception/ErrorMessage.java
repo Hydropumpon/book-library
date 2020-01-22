@@ -16,6 +16,8 @@ public abstract class ErrorMessage {
 
     public static final String CUSTOMER_NOT_FOUND = "Customer not found";
 
+    public static final String CUSTOMER_ALREADY_EXIST = "Customer with same email or login already exists";
+
     public static final String CUSTOMER_EMAIL_ALREADY_EXIST = "Customer with same email already exists";
 
     public static final String CUSTOMER_LOGIN_ALREADY_EXIST = "Customer with same login already exists";

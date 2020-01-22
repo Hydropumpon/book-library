@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -40,8 +39,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public Customer addCustomer(Customer customer) {
-        checkCustomerExistByEmail(customer);
-        checkCustomerExistByLogin(customer);
+        if (customerRepository.existsByLoginOrEmail(customer.getLogin(), customer.getEmail())) {
+            throw new ConflictException(ErrorMessage.CUSTOMER_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
+        }
         return customerRepository.save(customer);
     }
 
@@ -61,18 +61,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.save(customer);
     }
 
-    private void checkCustomerDuplicate(Customer customer, Customer customerDb) {
-        Optional<Customer> customerWithSameLogin = customerRepository.findByLogin(customer.getLogin());
-        Optional<Customer> customerWithSameEmail = customerRepository.findByEmail(customer.getEmail());
-
-        if (customerWithSameLogin.isPresent() && !(customerDb.getId().equals(customerWithSameLogin.get().getId()))) {
-            throw new ConflictException(ErrorMessage.CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
-        if (customerWithSameEmail.isPresent() && !(customerDb.getId().equals(customerWithSameEmail.get().getId()))) {
-            throw new ConflictException(ErrorMessage.CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<Borrowed> getBorrows(Long customerId) {
@@ -85,15 +73,14 @@ public class CustomerServiceImpl implements CustomerService {
                 () -> new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
     }
 
-    private void checkCustomerExistByLogin(Customer customer) {
-        if (customerRepository.existsByLogin(customer.getLogin())) {
-            throw new ConflictException(ErrorMessage.CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
-    }
+    private void checkCustomerDuplicate(Customer customer, Customer customerDb) {
 
-    private void checkCustomerExistByEmail(Customer customer) {
-        if (customerRepository.existsByEmail(customer.getEmail())) {
-            throw new ConflictException(ErrorMessage.CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
+        customerRepository.findByLogin(customer.getLogin())
+                          .filter(customer1 -> customer1.getLogin().equals(customerDb.getLogin())).orElseThrow(
+                () -> new ConflictException(ErrorMessage.CUSTOMER_LOGIN_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST));
+
+        customerRepository.findByEmail(customer.getEmail())
+                          .filter(customer1 -> customer1.getEmail().equals(customerDb.getEmail())).orElseThrow(
+                () -> new ConflictException(ErrorMessage.CUSTOMER_EMAIL_ALREADY_EXIST, ServiceErrorCode.ALREADY_EXIST));
     }
 }

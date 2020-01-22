@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = "books")
+@EqualsAndHashCode(of = "id")
 public class Author implements Serializable {
     @Id
     @Column(name = "id")

@@ -14,10 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -78,22 +76,23 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     private void checkNameDuplicate(Author author, Author authorDb) {
-        Optional<Author> authorWithSameName = authorRepository.findByName(author.getName());
-        if ((authorWithSameName.isPresent()) && (!authorDb.getId().equals(authorWithSameName.get().getId()))) {
-            throw new ConflictException(ErrorMessage.AUTHOR_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
+        authorRepository.findByName(author.getName())
+                        .filter(auth -> auth.getId().equals(authorDb.getId()))
+                        .orElseThrow(
+                                () -> new ConflictException(ErrorMessage.AUTHOR_EXIST, ServiceErrorCode.ALREADY_EXIST)
+                                    );
     }
 
     private Author getAuthorById(Long authorId) {
-        return authorRepository.findById(authorId).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.AUTHOR_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+        return authorRepository.findById(authorId)
+                               .orElseThrow(() -> new NotFoundException(ErrorMessage.AUTHOR_NOT_FOUND,
+                                                                        ServiceErrorCode.NOT_FOUND));
     }
 
     private void checkAuthorExistByName(Author author) {
-        Optional<Author> authorDb = authorRepository.findByName(author.getName());
-        if (authorDb.isPresent()) {
-            throw new ConflictException(ErrorMessage.AUTHOR_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
+        authorRepository.findByName(author.getName())
+                        .orElseThrow(
+                                () -> new ConflictException(ErrorMessage.AUTHOR_EXIST, ServiceErrorCode.ALREADY_EXIST));
     }
 
 }

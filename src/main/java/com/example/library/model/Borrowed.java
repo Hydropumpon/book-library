@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Borrowed {

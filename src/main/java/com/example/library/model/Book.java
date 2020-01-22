@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"authors", "borrowedSet"})
+@EqualsAndHashCode(of = "id")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

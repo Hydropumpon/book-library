@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BorrowedServiceImpl implements BorrowedService {
@@ -40,26 +39,29 @@ public class BorrowedServiceImpl implements BorrowedService {
     @Override
     @Transactional
     public Borrowed borrowBook(Borrowed borrowed) {
-        Optional<Book> book = bookRepository.findById(borrowed.getBook().getId());
-        Optional<Customer> customer = customerRepository.findById(borrowed.getCustomer().getId());
-        validateBorrowTake(book, customer);
-        book.get().setQuantity(book.get().getQuantity() - 1);
-        borrowed.setBook(book.get());
-        borrowed.setCustomer(customer.get());
-        bookRepository.save(book.get());
+        Book book = bookRepository.findById(borrowed.getBook().getId()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+        Customer customer = customerRepository.findById(borrowed.getCustomer().getId()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+        validateBorrowTake(book);
+        book.setQuantity(book.getQuantity() - 1);
+        borrowed.setBook(book);
+        borrowed.setCustomer(customer);
+        bookRepository.save(book);
         return borrowedRepository.save(borrowed);
     }
 
     @Override
     @Transactional
     public Borrowed returnBook(Long borrowedId) {
-        Optional<Borrowed> borrowed = borrowedRepository.findById(borrowedId);
-        checkBorrowActive(borrowed);
-        Optional<Book> book = bookRepository.findById(borrowed.get().getBook().getId());
-        book.get().setQuantity(book.get().getQuantity() + 1);
-        bookRepository.save(book.get());
-        borrowed.get().setReturnDate(LocalDate.now());
-        return borrowedRepository.save(borrowed.get());
+        Borrowed borrowed = borrowedRepository.findByIdAndReturnDateIsNull(borrowedId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+        Book book = bookRepository.findById(borrowed.getBook().getId()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND));
+        book.setQuantity(book.getQuantity() + 1);
+        bookRepository.save(book);
+        borrowed.setReturnDate(LocalDate.now());
+        return borrowedRepository.save(borrowed);
     }
 
     @Override
@@ -88,20 +90,8 @@ public class BorrowedServiceImpl implements BorrowedService {
                                                                           ServiceErrorCode.NOT_FOUND));
     }
 
-    private void checkBorrowActive(Optional<Borrowed> borrowed) {
-        if (!borrowed.isPresent() || (borrowed.get().getReturnDate() != null)) {
-            throw new NotFoundException(ErrorMessage.BORROW_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-        }
-    }
-
-    private void validateBorrowTake(Optional<Book> book, Optional<Customer> customer) {
-        if (!customer.isPresent()) {
-            throw new NotFoundException(ErrorMessage.CUSTOMER_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-        }
-        if (!book.isPresent()) {
-            throw new NotFoundException(ErrorMessage.BOOK_NOT_FOUND, ServiceErrorCode.NOT_FOUND);
-        }
-        if (book.get().getQuantity() == NO_BOOK_AVAILABLE) {
+    private void validateBorrowTake(Book book) {
+        if (book.getQuantity() == NO_BOOK_AVAILABLE) {
             throw new UnavailableException(ErrorMessage.BOOK_NOT_AVAILABLE, ServiceErrorCode.UNAVAILABLE);
         }
     }

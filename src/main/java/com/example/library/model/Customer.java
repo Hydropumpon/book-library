@@ -26,7 +26,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Customer")
 @Builder
-@EqualsAndHashCode(exclude = "borrows")
+@EqualsAndHashCode(of = "id")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

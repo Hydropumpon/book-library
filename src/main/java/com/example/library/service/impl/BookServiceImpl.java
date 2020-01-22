@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -83,25 +83,28 @@ public class BookServiceImpl implements BookService {
     }
 
     private void checkBookExistByTitle(Book book) {
-        Optional<Book> bookDb = bookRepository.findByTitle(book.getTitle());
-        if (bookDb.isPresent()) {
-            throw new ConflictException(ErrorMessage.BOOK_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
+        bookRepository.findByTitle(book.getTitle())
+                      .ifPresent(b -> {
+                          throw new ConflictException(ErrorMessage.BOOK_EXIST, ServiceErrorCode.ALREADY_EXIST);
+                      });
+
     }
 
     private void checkTitleDuplicate(Book book, Book bookDb) {
-        Optional<Book> bookWithSameTitle = bookRepository.findByTitle(book.getTitle());
-        if ((bookWithSameTitle.isPresent()) && (!bookDb.getId().equals(bookWithSameTitle.get().getId()))) {
-            throw new ConflictException(ErrorMessage.BOOK_EXIST, ServiceErrorCode.ALREADY_EXIST);
-        }
+        bookRepository.findByTitle(book.getTitle())
+                      .filter(book1 -> book1.getId().equals(bookDb.getId()))
+                      .orElseThrow(
+                              () -> new ConflictException(ErrorMessage.BOOK_EXIST, ServiceErrorCode.ALREADY_EXIST)
+                                  );
+
+
     }
 
     private List<Author> getAuthorsById(Book book) {
-        List<Author> authors = new ArrayList<>();
-        for (Author author : book.getAuthors()) {
-            authors.add(authorRepository.findById(author.getId()).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.AUTHOR_NOT_FOUND, ServiceErrorCode.NOT_FOUND)));
-        }
-        return authors;
+        return book.getAuthors()
+                   .stream()
+                   .map(author -> authorRepository.findById(author.getId()).orElseThrow(
+                           () -> new NotFoundException(ErrorMessage.AUTHOR_NOT_FOUND, ServiceErrorCode.NOT_FOUND)))
+                   .collect(Collectors.toList());
     }
 }
